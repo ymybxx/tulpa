@@ -12,7 +12,7 @@
 </p>
 
 <p>
-  <a href="#记得你longmemeval-91">长期记忆</a> ·
+  <a href="#记得你longmemeval-94">长期记忆</a> ·
   <a href="#任意-live2d-模型实时表情">任意 Live2D 模型</a> ·
   <a href="#实时陪伴">实时陪伴</a> ·
   <a href="#快速开始">快速开始</a>
@@ -22,11 +22,11 @@
 
 <br />
 
-## 记得你：LongMemEval 91%
+## 记得你：LongMemEval 94%
 
-<p align="center"><img src="assets/memory.jpg" alt="LongMemEval 91%，多层记忆结构" width="100%" /></p>
+<p align="center"><img src="assets/memory.jpg" alt="LongMemEval 94%，多层记忆结构" width="100%" /></p>
 
-tulpa 内置一套专为陪伴型 AI 设计的**多层记忆系统**，在长期对话记忆评测 **LongMemEval 上达到 91%**。
+tulpa 内置一套专为陪伴型 AI 设计的**多层记忆系统**，在长期对话记忆评测 **LongMemEval 上达到 94%**。
 
 - **分层记忆**：原始对话、事实、近期状态、长期印象、人物、关联层层整理。TA 不只记得你说过的话，还知道你最近在忙什么、你们是什么关系。
 - **有凭有据**：每条记忆都能追溯到当时的原话，不会把猜测当成事实。
