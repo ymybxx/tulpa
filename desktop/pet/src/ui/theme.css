@@ -1,0 +1,173 @@
+/*
+ * A+ 晴空羊皮纸 design tokens. Every new UI surface reads colors, shadows and
+ * radii from these variables only, so a theme (time of day, or later a
+ * character card palette) is one data-scene switch away.
+ */
+.ui-theme {
+  --font-sans: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-label: "Cinzel", "Times New Roman", serif;
+
+  --radius-panel: 16px;
+  --radius-card: 12px;
+  --radius-row: 10px;
+  --space-gutter: 24px;
+
+  --panel: #F4EFE5;
+  --panel-2: #E8E0D0;
+  --panel-edge: #DCCFB6;
+  --frame: rgba(196, 168, 118, 0.5);
+  --card: #FBF8F2;
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 3px rgba(80, 60, 30, 0.1);
+  --ink: #3B4354;
+  --muted: #5E6679;
+  --gold-text: #7D5F2F;
+  --gold-line: #C4A876;
+  --chip: rgba(59, 67, 84, 0.07);
+  --well: #E9E1D2;
+  --well-shadow: inset 0 1px 3px rgba(80, 60, 30, 0.14);
+  --btn: #3B4354;
+  --btn-edge: #262C38;
+  --btn-fg: #F7F2E8;
+  --btn-2: #FBF8F2;
+  --btn-2-edge: #D8CCB5;
+  --btn-2-fg: #3B4354;
+  --btn-icon-2: #3B4354;
+  --btn-icon-2-fg: #F3EEE4;
+  --accent: #F2C14E;
+  --accent-ink: #3B4354;
+  --accent-glow: rgba(242, 193, 78, 0.45);
+  --switch-on: #4F8C76;
+  --hue-slate: #8C93A3;
+  --hue-blue: #5C7FB8;
+  --hue-amber: #B07A45;
+  --hue-rose: #C0708A;
+  --hue-green: #4F8C76;
+  --hue-violet: #8C6BB0;
+  --ok-bg: #D7EADF;
+  --ok-fg: #24543F;
+  --warn-bg: #F6E1B8;
+  --warn-fg: #7A4E12;
+  --info-bg: #D6E6F5;
+  --info-fg: #244A78;
+  --danger-fg: #9A2F2F;
+  --sh-1: rgba(30, 45, 75, 0.08);
+  --sh-2: rgba(30, 45, 75, 0.14);
+  --sh-3: rgba(30, 45, 75, 0.18);
+
+  --sky-1: #6E9FD8;
+  --sky-2: #9EC3EC;
+  --sky-3: #D2E3F2;
+  --sky-4: #F3EADA;
+  --sun-at: 84% 12%;
+  --sun: rgba(255, 250, 235, 0.75);
+  --sun-fade: rgba(255, 250, 235, 0.3);
+  --island: rgba(170, 196, 226, 0.9);
+  --haze: rgba(236, 242, 248, 0.7);
+  --cloud-far: rgba(255, 255, 255, 0.55);
+  --cloud-mid: rgba(255, 255, 255, 0.75);
+  --cloud-near: #FFFFFF;
+  --cloud-near-shade: rgba(190, 208, 230, 0.8);
+  --ring: #FFFFFF;
+  --ring-fill: rgba(255, 255, 255, 0.1);
+  --rim: rgba(255, 255, 255, 0.8);
+  --char-shadow: rgba(40, 70, 120, 0.28);
+  --scene-ink: #FFFFFF;
+  --scene-ink-shadow: 0 1px 3px rgba(20, 40, 80, 0.45);
+  --scene-badge: rgba(255, 255, 255, 0.18);
+  --star-opacity: 0;
+
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ui-theme[data-scene="dusk"] {
+  --sky-1: #8E7BB8;
+  --sky-2: #E4A08E;
+  --sky-3: #F6C99C;
+  --sky-4: #F8E3C8;
+  --sun-at: 74% 44%;
+  --sun: rgba(255, 232, 186, 0.95);
+  --sun-fade: rgba(255, 214, 160, 0.4);
+  --island: rgba(170, 120, 140, 0.75);
+  --haze: rgba(250, 222, 190, 0.7);
+  --cloud-far: rgba(255, 226, 206, 0.6);
+  --cloud-mid: rgba(255, 236, 220, 0.8);
+  --cloud-near: #FFF1E4;
+  --cloud-near-shade: rgba(230, 170, 150, 0.7);
+  --ring: #FFF1DE;
+  --ring-fill: rgba(255, 240, 220, 0.12);
+  --rim: rgba(255, 220, 170, 0.9);
+  --char-shadow: rgba(110, 60, 60, 0.3);
+  --scene-ink-shadow: 0 1px 3px rgba(90, 40, 40, 0.45);
+  --btn: #4A3F52;
+  --btn-edge: #2F2836;
+  --ok-bg: #DDEAD9;
+  --switch-on: #5E8C6E;
+}
+
+.ui-theme[data-scene="night"] {
+  --panel: #1E2434;
+  --panel-2: #171C29;
+  --panel-edge: #343B50;
+  --frame: rgba(214, 184, 124, 0.4);
+  --card: #252C3F;
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --ink: #EFE8DA;
+  --muted: #AEB3C2;
+  --gold-text: #E3C88F;
+  --gold-line: #B89A62;
+  --chip: rgba(255, 255, 255, 0.07);
+  --well: #171C29;
+  --well-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.45);
+  --btn: #EDE3CC;
+  --btn-edge: #B9AE93;
+  --btn-fg: #2A2F3D;
+  --btn-2: #2A3146;
+  --btn-2-edge: #171C29;
+  --btn-2-fg: #EFE8DA;
+  --btn-icon-2: #EDE3CC;
+  --btn-icon-2-fg: #2A2F3D;
+  --switch-on: #5FA88C;
+  --ok-bg: rgba(120, 200, 160, 0.16);
+  --ok-fg: #9EDDBE;
+  --warn-bg: rgba(242, 193, 78, 0.16);
+  --warn-fg: #F2CF7A;
+  --info-bg: rgba(127, 167, 216, 0.18);
+  --info-fg: #A9C8F0;
+  --danger-fg: #F2A0A0;
+  --sh-1: rgba(0, 0, 0, 0.25);
+  --sh-2: rgba(0, 0, 0, 0.32);
+  --sh-3: rgba(0, 0, 0, 0.4);
+
+  --sky-1: #0D1630;
+  --sky-2: #1B2A4E;
+  --sky-3: #2E3760;
+  --sky-4: #3B3A5E;
+  --sun-at: 84% 14%;
+  --sun: rgba(255, 244, 220, 0.9);
+  --sun-fade: rgba(255, 236, 200, 0.12);
+  --island: rgba(40, 52, 86, 0.95);
+  --haze: rgba(60, 64, 104, 0.55);
+  --cloud-far: rgba(70, 82, 124, 0.55);
+  --cloud-mid: rgba(78, 90, 134, 0.8);
+  --cloud-near: #4C5784;
+  --cloud-near-shade: rgba(34, 42, 72, 0.9);
+  --ring: #F2D08A;
+  --ring-fill: rgba(242, 208, 138, 0.05);
+  --rim: rgba(242, 208, 138, 0.55);
+  --char-shadow: rgba(0, 0, 0, 0.45);
+  --scene-ink: #F4EDE0;
+  --scene-ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --scene-badge: rgba(255, 255, 255, 0.08);
+  --star-opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-theme *, .ui-theme *::before, .ui-theme *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

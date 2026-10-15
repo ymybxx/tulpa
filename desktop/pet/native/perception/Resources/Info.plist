@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>zh_CN</string>
+  <key>CFBundleDisplayName</key>
+  <string>tulpa 感知服务</string>
+  <key>CFBundleExecutable</key>
+  <string>fish-memory-perception-helper</string>
+  <key>CFBundleIdentifier</key>
+  <string>app.tulpa.desktop.perception</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>FishMemoryPerceptionHelper</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>0.1.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>12.3</string>
+  <key>LSUIElement</key>
+  <true/>
+	<key>NSCameraUsageDescription</key>
+	<string>tulpa 仅在本机分析可观察的面部状态，不保存或上传摄像头画面。</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>tulpa 使用系统播放音频理解正在观看或收听的内容，并排除自身语音。</string>
+</dict>
+</plist>

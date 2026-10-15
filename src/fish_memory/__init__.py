@@ -1,0 +1,1 @@
+"""fish-memory service package."""

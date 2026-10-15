@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["vite/client"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "baseUrl": ".",
+    "paths": {
+      "@cubism/*": ["vendor/cubism-web-framework/dist/*"]
+    }
+  },
+  "include": [
+    "src/character/**/*.ts",
+    "src/character/**/*.tsx",
+    "src/facial-demo/**/*.ts",
+    "src/look-editor/**/*.tsx",
+    "src/main/**/*.ts",
+    "src/onboarding/**/*.ts",
+    "src/onboarding/**/*.tsx",
+    "src/settings-next/**/*.ts",
+    "src/settings-next/**/*.tsx",
+    "src/ui/**/*.ts",
+    "src/ui/**/*.tsx",
+    "src/model-manager/**/*.ts",
+    "src/renderer/**/*.ts",
+    "src/shared/**/*.ts",
+    "vite.config.ts"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "name": "tulpa",
+  "productName": "tulpa",
+  "version": "0.1.0",
+  "private": true,
+  "author": "tulpa contributors",
+  "license": "MIT",
+  "homepage": "https://github.com/ymybxx/tulpa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ymybxx/tulpa.git",
+    "directory": "desktop/pet"
+  },
+  "bugs": {
+    "url": "https://github.com/ymybxx/tulpa/issues"
+  },
+  "description": "tulpa: a desktop companion with voice, Live2D characters and long-term memory, for macOS and Windows 11",
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "build:cubism-framework": "tsc -p vendor/cubism-web-framework/tsconfig.build.json",
+    "update:cubism-framework": "node scripts/update-cubism-framework.mjs",
+    "prepare:cubism-runtime": "npm run build:cubism-framework && node scripts/prepare-cubism-runtime.mjs",
+    "build:audio:mac": "bash scripts/build-livekit-audio-mac.sh",
+    "build:perception:mac": "bash scripts/build-perception-mac.sh",
+    "build:pet-input:mac": "bash scripts/build-pet-input-mac.sh",
+    "build:electron": "rimraf dist-electron && tsc -p tsconfig.electron.json",
+    "build:renderer": "npm run prepare:cubism-runtime && vite build",
+    "build": "npm run build:audio:mac && npm run build:perception:mac && npm run build:pet-input:mac && npm run build:electron && npm run build:renderer",
+    "dev": "npm run build:audio:mac && npm run build:perception:mac && npm run build:pet-input:mac && npm run build:electron && npm run prepare:cubism-runtime && concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "start": "electron .",
+    "test": "vitest run",
+    "test:packaging": "node --test ../../tests/desktop/test-packaging-guard.mjs",
+    "test:desktop-request-auth": "npm run build:electron && electron scripts/verify-desktop-request-auth.mjs",
+    "test:texture-patch-gpu": "npm run prepare:cubism-runtime && cross-env TEXTURE_PATCH_HARNESS=1 vite build && electron scripts/verify-texture-patch-gpu.mjs",
+    "test:atlas-compaction-worker": "npm run build:electron && electron scripts/verify-atlas-compaction-worker.mjs",
+    "typecheck": "npm run build:cubism-framework && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "build:runtime:mac": "bash scripts/build-runtime-mac.sh",
+    "build:plugins:mac": "bash scripts/build-plugin-tools-mac.sh",
+    "prepare:models": "cd ../.. && uv run --locked python desktop/pet/scripts/prepare-bundled-models.py desktop/pet/runtime/mac-arm64/models",
+    "prepare:live2d": "vite-node scripts/prepare-bundled-live2d.ts runtime/mac-arm64/models/live2d",
+    "prepare:epsilon-master": "node scripts/prepare-epsilon-master.mjs",
+    "dist:mac": "npm run dist:mac:local && bash scripts/make-dmg-mac.sh",
+    "predist:mac:local": "node scripts/assert-packaging-idle.mjs",
+    "dist:mac:local": "npm run build:runtime:mac && npm run build:plugins:mac && npm run prepare:models && npm run prepare:live2d && npm run build && node scripts/assert-packaging-idle.mjs && rimraf release dist && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dir --arm64 --config.electronDist=node_modules/electron/dist && bash scripts/adhoc-sign-mac.sh",
+    "build:native:win": "pwsh -NoProfile -File scripts/build-native-windows.ps1",
+    "build:runtime:win": "pwsh -NoProfile -File scripts/build-runtime-windows.ps1",
+    "build:plugins:win": "pwsh -NoProfile -File scripts/build-plugin-tools-windows.ps1",
+    "prepare:models:win": "cd ../.. && uv run --locked python desktop/pet/scripts/prepare-bundled-models.py desktop/pet/runtime/win32-x64/models",
+    "prepare:live2d:win": "vite-node scripts/prepare-bundled-live2d.ts runtime/win32-x64/models/live2d",
+    "build:win": "npm run build:native:win && npm run build:electron && npm run build:renderer",
+    "dev:win": "node scripts/assert-windows-dev-runtime.mjs && npm run build:native:win && npm run build:electron && npm run prepare:cubism-runtime && concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "predist:win:local": "node scripts/assert-packaging-idle.mjs",
+    "dist:win:local": "npm run build:runtime:win && npm run build:plugins:win && npm run prepare:models:win && npm run prepare:live2d:win && npm run build:win && node scripts/assert-packaging-idle.mjs && electron-builder --win nsis --x64 --config packaging/electron-builder-windows.cjs --publish never",
+    "prepare:runtime:win": "npm run build:runtime:win && npm run build:plugins:win"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1.10.1",
+    "i18next": "25.6.3",
+    "jszip": "3.10.1",
+    "pngjs": "^7.0.0",
+    "preact": "^10.29.8",
+    "ws": "8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "@types/pngjs": "^6.0.5",
+    "@types/ws": "8.18.1",
+    "concurrently": "8.2.2",
+    "cross-env": "7.0.3",
+    "electron": "43.7.7",
+    "electron-builder": "24.13.3",
+    "rimraf": "5.0.10",
+    "typescript": "5.7.3",
+    "vite": "5.4.21",
+    "vitest": "2.1.9",
+    "wait-on": "7.2.0"
+  },
+  "build": {
+    "appId": "app.tulpa.desktop",
+    "productName": "tulpa",
+    "asar": true,
+    "afterPack": "scripts/prune-electron-locales.cjs",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist-renderer/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "runtime/mac-arm64/fish-plugin-tools",
+        "to": "fish-plugin-tools"
+      },
+      {
+        "from": "runtime/mac-arm64/pet-application-activation.node",
+        "to": "native/pet-application-activation.node"
+      },
+      {
+        "from": "runtime/mac-arm64/fish-memory-runtime",
+        "to": "runtime/fish-memory-runtime"
+      },
+      {
+        "from": "runtime/mac-arm64/FishMemoryPerceptionHelper.app",
+        "to": "perception/FishMemoryPerceptionHelper.app"
+      },
+      {
+        "from": "runtime/mac-arm64/models",
+        "to": "models"
+      },
+      {
+        "from": "runtime/mac-arm64/FishMemoryAudioHelper.app",
+        "to": "audio/FishMemoryAudioHelper.app"
+      },
+      {
+        "from": "THIRD_PARTY_NOTICES.md",
+        "to": "licenses/THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "from": "vendor/cubism-web-framework/LICENSE.md",
+        "to": "licenses/Live2D-Cubism-Open-Software-License.md"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.entertainment",
+      "minimumSystemVersion": "12.3.0",
+      "icon": "packaging/brand/tulpa.icns",
+      "target": [
+        "dir"
+      ],
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "tulpa 使用麦克风与你进行本地语音对话。",
+        "NSCameraUsageDescription": "tulpa 仅在本机分析可观察的面部状态，不保存或上传摄像头画面。",
+        "NSAudioCaptureUsageDescription": "tulpa 使用系统播放音频理解正在观看或收听的内容，并排除自身语音。",
+        "CFBundleDevelopmentRegion": "zh_CN",
+        "CFBundleLocalizations": [
+          "zh_CN",
+          "en"
+        ]
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,121 @@
+name: Windows desktop candidate
+
+# Windows hosted runners validate the toolchain and package. They run Windows
+# Server; physical Windows 11 audio/GPU/desktop acceptance remains a separate gate.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-x64:
+    runs-on: windows-2025
+    timeout-minutes: 90
+    env:
+      PYTHONUTF8: "1"
+      UV_CACHE_DIR: ${{ github.workspace }}/.cache/uv
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      FISH_MEMORY_WINDOWS_CI_DATABASE_SMOKE: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/pet/package-lock.json
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.32"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python and desktop dependencies
+        shell: pwsh
+        run: |
+          uv sync --locked --dev --extra voice --python 3.11.15
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm ci --prefix desktop/pet
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify PostgreSQL Unicode paths before the full build
+        shell: pwsh
+        run: |
+          & ./desktop/pet/scripts/build-pg0-windows.ps1 -PrepareOnly
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & ./desktop/pet/scripts/verify-windows-postgres-unicode.ps1 -PostgresRoot (Join-Path $PWD '.cache/pg0-windows-utf8-v1/prepared/postgresql')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify actual initdb launch variants before freezing Python
+        shell: pwsh
+        run: |
+          uv run --locked python desktop/pet/scripts/verify-windows-initdb.py --postgres-root .cache/pg0-windows-utf8-v1/prepared/postgresql
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Restore compiled PostgreSQL dependencies
+        id: pg0-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            .cache/pg0-windows-utf8-v1/cargo-target
+          key: pg0-windows-x64-v1-${{ hashFiles('desktop/pet/packaging/pg0-windows/sources.json') }}-${{ github.sha }}
+          restore-keys: |
+            pg0-windows-x64-v1-${{ hashFiles('desktop/pet/packaging/pg0-windows/sources.json') }}-
+      - name: Typecheck desktop
+        working-directory: desktop/pet
+        run: npm run typecheck
+      - name: Verify Windows protocol and audio behavior
+        shell: pwsh
+        run: |
+          uv run --locked python -c "import time; assert time.timezone == 0 and (not time.daylight or time.altzone == 0), 'Windows CI must use UTC to exercise the tests'"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          uv run --locked pytest -q tests/companion/test_shared_asr_tcp.py tests/companion/test_audio.py tests/test_desktop_runtime.py tests/test_runtime_platform.py tests/test_windows_packaging.py tests/test_model_sources.py tests/test_windows_postgres_diagnostics.py
+      - name: Verify desktop platform boundaries
+        working-directory: desktop/pet
+        run: npx vitest run electron/platform/runtime-paths.test.ts electron/platform/process-tree.test.ts electron/runtime-process-registry.test.ts electron/system-permissions.test.ts electron/perception-permission-settings.test.ts src/shared/system-settings-names.test.ts electron/runtime-manager-launch.test.ts
+      - name: Verify private Windows database environment
+        working-directory: desktop/pet
+        run: npx vitest run electron/runtime-manager.test.ts electron/facial-test-service.test.ts -t "isolates the Windows PostgreSQL|verified frozen backend for Windows"
+      - name: Compile native Windows helpers before downloading bundled models
+        working-directory: desktop/pet
+        shell: pwsh
+        run: |
+          npm run build:native:win
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build:electron
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node scripts/verify-windows-native.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build Windows x64 installer and run native/runtime gates
+        working-directory: desktop/pet
+        run: npm run dist:win:local
+      - name: Save compiled PostgreSQL dependencies
+        # An optional cache must not hold cancelled builds or block a candidate.
+        if: ${{ !cancelled() && steps.pg0-cache.outputs.cache-hit != 'true' && hashFiles('.cache/pg0-windows-utf8-v1/cargo-target/x86_64-pc-windows-msvc/release/pg0.exe') != '' }}
+        timeout-minutes: 3
+        continue-on-error: true
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            .cache/pg0-windows-utf8-v1/cargo-target
+          key: ${{ steps.pg0-cache.outputs.cache-primary-key }}
+      - name: Verify packaged native ABI, process cleanup, helper protocol and runtime
+        working-directory: desktop/pet
+        run: node scripts/verify-windows-package.mjs release-win/win-unpacked
+      - name: Record installer digest
+        shell: pwsh
+        run: |
+          Get-ChildItem desktop/pet/release-win/*-setup.exe | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } | Set-Content desktop/pet/release-win/SHA256SUMS.txt
+      - name: Upload unsigned test installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: tulpa-windows-x64-candidate
+          path: |
+            desktop/pet/release-win/*-setup.exe
+            desktop/pet/release-win/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14

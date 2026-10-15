@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:" />
+    <title data-i18n="和宠物聊两句">和宠物聊两句</title>
+  </head>
+  <body>
+    <div id="senses-root" class="ui-theme">
+      <section id="bubble" class="pc-card pc-bubble" hidden aria-label="宠物正在说的话" data-i18n-aria-label="宠物正在说的话">
+        <div class="pc-bubble__heading"><span class="pc-wave" aria-hidden="true"><i></i><i></i><i></i></span><span id="bubble-label"><span data-i18n="正在说">正在说</span></span></div>
+        <div id="speech-scroll"><div id="speech"></div><div id="speech-note" hidden></div></div>
+      </section>
+      <button id="entry" class="pc-entry" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/></svg><span data-i18n="聊两句">聊两句</span>
+      </button>
+      <button id="home" class="pc-entry" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-6h4v6"/></svg><span data-i18n="主窗口">主窗口</span>
+      </button>
+      <form id="composer" class="pc-card pc-composer" hidden autocomplete="off">
+        <div class="pc-composer__heading">
+          <button type="button" id="history" aria-label="聊两句，在主窗口打开完整聊天" data-i18n-aria-label="聊两句，在主窗口打开完整聊天"><span data-i18n="聊两句">聊两句</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M18 14v5H5V6h5"/></svg></button>
+          <span class="pc-composer__actions">
+            <button type="button" id="new-chat" title="从头开始聊：刚才的话不再接着说，TA 记得的事不会忘" data-i18n-title="从头开始聊：刚才的话不再接着说，TA 记得的事不会忘"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4H5v12h4l-4 4V16M19 4v6M16 7h6"/></svg><span data-i18n="新对话">新对话</span></button>
+            <button type="button" id="close" aria-label="收起输入框，保留草稿" data-i18n-aria-label="收起输入框，保留草稿"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </span>
+        </div>
+        <textarea id="input" placeholder="想说什么？" aria-label="发送给宠物的文字" rows="2" maxlength="32000" spellcheck="false" data-i18n-placeholder="想说什么？" data-i18n-aria-label="发送给宠物的文字"></textarea>
+        <div class="pc-composer__footer">
+          <input type="file" id="files" multiple hidden>
+          <button type="button" id="attach" class="pc-attach" aria-label="发图片或文件，也可以拖进来或粘贴图片" data-i18n-aria-label="发图片或文件，也可以拖进来或粘贴图片"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 7l-6.5 6.5a2 2 0 0 0 2.8 2.8L19 9.6a4 4 0 0 0-5.7-5.7l-6.8 6.8a6 6 0 0 0 8.5 8.5L20 14.2"/></svg></button>
+          <span id="hint" role="status"><span data-i18n="Enter 发送 · ⇧ Enter 换行">Enter 发送 · ⇧ Enter 换行</span></span>
+          <button type="button" id="clear-attachments" class="pc-attach-clear" hidden aria-label="清除附件" data-i18n-aria-label="清除附件"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <button id="send" class="pc-send" aria-label="发送" disabled data-i18n-aria-label="发送"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span><span data-i18n="发送">发送</span></button>
+        </div>
+      </form>
+      <section id="quick" class="pc-card pc-quick" role="dialog" aria-label="快捷面板" hidden data-i18n-aria-label="快捷面板"></section>
+      <button id="model-status" type="button" class="model-status" role="status" aria-live="polite" hidden><span class="model-status__dot"></span><span id="model-status-text"></span></button>
+      <button id="owner-voice-prompt" type="button" class="model-status owner-voice-prompt" hidden><span class="model-status__dot"></span><span><span data-i18n="刚才没认出是你 · 是我，加进声纹">刚才没认出是你 · 是我，加进声纹</span></span></button>
+      <div id="senses" class="senses" role="toolbar" aria-label="TA 的感官" hidden data-i18n-aria-label="TA 的感官"></div>
+      <div id="sense-slot" class="sense-slot" hidden>
+        <section id="sense-panel" class="sense-card" role="dialog" aria-labelledby="sense-title">
+          <div class="sense-card__body">
+            <div class="sense-card__title"><span class="sense-rule"></span><span id="sense-title"><span data-i18n="陪伴中">陪伴中</span></span><span class="sense-rule sense-rule--end"></span></div>
+            <div id="sense-rows" class="sense-rows"></div>
+            <p id="sense-note" class="sense-note" role="status" hidden></p>
+            <button id="sense-usage" type="button" class="sense-usage" hidden></button>
+          </div>
+          <div class="sense-card__footer">
+            <button id="sense-pause" type="button" class="sense-pill"><span class="sense-pill__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="sense-pause-icon" d="M8 5v14M16 5v14"/></svg></span><span id="sense-pause-label"><span data-i18n="暂停陪伴">暂停陪伴</span></span></button>
+            <button id="sense-settings" type="button" class="sense-link"><span data-i18n="感知与权限…">感知与权限…</span></button>
+          </div>
+        </section>
+        <section id="sense-confirm" class="sense-card" role="alertdialog" aria-modal="true" aria-labelledby="sense-confirm-title" hidden>
+          <div class="sense-card__body sense-card__body--center">
+            <div id="sense-confirm-title" class="sense-confirm__title"><span data-i18n="暂停陪伴">暂停陪伴</span></div>
+            <p class="sense-confirm__text"><span data-i18n="暂停后 TA 不会再主动找你说话。">暂停后 TA 不会再主动找你说话。</span><span id="sense-confirm-background"></span><br><span data-i18n="要不要同时关闭所有感知和内心？">要不要同时关闭所有感知和内心？</span></p>
+          </div>
+          <div class="sense-card__footer sense-card__footer--center">
+            <button id="sense-keep" type="button" class="sense-pill sense-pill--plain"><span data-i18n="否，保留感知">否，保留感知</span></button>
+            <button id="sense-close-all" type="button" class="sense-pill sense-pill--dark"><span class="sense-pill__icon sense-pill__icon--accent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span data-i18n="是，全部关闭">是，全部关闭</span></button>
+          </div>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="/src/renderer/pet-chat.ts"></script>
+  </body>
+</html>

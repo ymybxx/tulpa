@@ -1,0 +1,38 @@
+Tulpa Windows pg0 build
+
+pg0 0.14.2: https://github.com/vectorize-io/pg0/tree/v0.14.2
+License: MIT, as declared by the upstream Cargo.toml.
+PostgreSQL 18.1.0: https://github.com/theseus-rs/postgresql-binaries/releases/tag/18.1.0
+The original PostgreSQL LICENSE is retained in the bundled archive.
+pgvector 0.8.1: https://github.com/pgvector/pgvector/tree/v0.8.1
+License: PostgreSQL License.
+Windows binary build: https://github.com/nicoloboschi/pgvector_compiled/releases/tag/v0.18.237
+
+Modifications: embed a UTF-8 activeCodePage manifest into PostgreSQL executables,
+preserving original manifests; accept verified build-time archives; allow the
+application to select a private pg0 cache using the absolute TULPA_PG0_HOME.
+Without TULPA_PG0_HOME, pg0 retains its original home-directory behavior.
+On Windows, explicit TULPA_PG0_DEBUG=1 enables command/embedded debug logging
+for the disposable CI package doctor; normal log levels remain unchanged.
+Tracing writes to stderr so the Python SDK preserves failure diagnostics.
+The Windows pg0 process restores the standard DLL search with
+SetDllDirectoryW(NULL) before starting PostgreSQL; failures stop startup.
+This isolates external-program loading from the frozen Python DLL directory
+without changing the parent process. Non-Windows startup is unchanged.
+Reference: https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html#launching-external-programs-from-the-frozen-application
+Pinned input URLs and SHA256 digests are in sources.json. The Rust dependency
+versions are fixed by the upstream Cargo.lock and cargo build --locked.
+
+License provenance:
+- The fixed pg0 v0.14.2 source archive and its PyPI wheel do not include a
+  standalone project LICENSE. Cargo.toml declares license = "MIT", and README.md
+  ends with "License / MIT". No upstream copyright holder has been inferred.
+  MIT-standard-terms.txt is the unmodified MIT template from SPDX license data
+  v3.25.0; it is not represented as a copy of a pg0 LICENSE file:
+  https://github.com/spdx/license-list-data/blob/v3.25.0/text/MIT.txt
+- PostgreSQL-LICENSE.txt is copied directly from the verified PostgreSQL 18.1.0
+  archive by the build script, and is also retained inside pg0's embedded ZIP.
+- pgvector-LICENSE.txt is the original file from pgvector v0.8.1, matching the
+  PGVECTOR_VERSION in the fixed pg0 versions.env:
+  https://github.com/pgvector/pgvector/blob/v0.8.1/LICENSE
+  SHA256: 3959f8e3ea8b08e35d1c26fc25bc7b6dcf7c2d80f372e4fbff6f6b0412758456

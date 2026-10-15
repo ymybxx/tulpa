@@ -1,0 +1,65 @@
+name: Feature request
+description: Propose a focused desktop, character, voice, or memory improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user-visible problem cannot be solved by the current system?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Primary boundary
+      options:
+        - Desktop app / UI
+        - Live2D character / looks
+        - Voice / speech
+        - Perception (screen, audio)
+        - Proactive companion / inner thoughts
+        - Memory / recall
+        - Agent tasks / plugins
+        - Logs / observability
+        - Packaging / installation
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the contract and outcome before implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and measurement
+      description: How should accuracy, latency, tokens, storage, or usability be measured?
+
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Tradeoffs and compatibility
+      description: Note migrations, provider cost, latency, platform, or privacy impact.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I searched existing issues and documentation.
+          required: true
+        - label: This request does not include credentials or private user data.
+          required: true

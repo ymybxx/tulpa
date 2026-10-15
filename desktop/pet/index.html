@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>tulpa</title>
+    <script src="pet-assets://runtime/live2dcubismcore.min.js"></script>
+  </head>
+  <body>
+    <!-- TA's panel: a box inside a window covering the display (see electron/pet-stage.ts). -->
+    <div id="pet-panel">
+      <canvas id="pet-canvas" aria-label="Live2D 桌面宠物" data-i18n-aria-label="Live2D 桌面宠物"></canvas>
+      <button
+        id="unlock-interaction"
+        type="button"
+        aria-label="恢复点击：让鼠标能点到 TA"
+        title="现在鼠标会穿过 TA；点这里恢复"
+       data-i18n-aria-label="恢复点击：让鼠标能点到 TA" data-i18n-title="现在鼠标会穿过 TA；点这里恢复">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8.5 10V7.7a3.5 3.5 0 0 1 6.7-1.4" />
+          <rect x="5" y="10" width="14" height="10" rx="3" />
+          <path d="M12 14v2.5" />
+        </svg>
+        <span><span data-i18n="恢复点击">恢复点击</span></span>
+      </button>
+      <div id="empty-state" hidden>
+        <strong><span data-i18n="还没有 Live2D 人物">还没有 Live2D 人物</span></strong>
+        <span><span data-i18n="右键打开菜单并进入模型管理">右键打开菜单并进入模型管理</span></span>
+      </div>
+      <div id="error-state" hidden></div>
+    </div>
+    <script type="module" src="/src/renderer/index.ts"></script>
+  </body>
+</html>

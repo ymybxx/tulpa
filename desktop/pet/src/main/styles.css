@@ -1,0 +1,50 @@
+html, body { height: 100%; overflow: hidden; }
+#onboarding-view { position: fixed; inset: 0; z-index: 10; }
+body.onboarding-active .main-layout { visibility: hidden; }
+#settings-next-view, #character-view, #looks-view, #chat-next-view { position: fixed; inset: 0; z-index: 9; }
+body.settings-next-active .main-layout, body.character-active .main-layout, body.looks-active .main-layout, body.chat-active .main-layout { visibility: hidden; }
+body { background: #0e1513; }
+.main-layout { display: grid; grid-template-columns: 92px minmax(0, 1fr); height: 100%; }
+.main-nav { display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 18px 12px; background: #0b1210; border-right: 1px solid #29453d; }
+.main-brand { display: grid; place-items: center; height: 56px; margin-bottom: 8px; font-size: 30px; }
+.main-nav button { display: grid; place-items: center; gap: 5px; min-height: 66px; padding: 8px; color: #91a39d; background: transparent; border: 1px solid transparent; border-radius: 14px; font: inherit; font-size: 13px; cursor: pointer; }
+.main-nav button span { font-size: 22px; }
+.main-nav button:hover { color: #d9e8e2; background: #14231f; }
+.main-nav button.active { color: #eafff8; background: #17352d; border-color: #37695b; }
+.main-content, .main-view { min-width: 0; min-height: 0; height: 100%; }
+#models-view { overflow: hidden; background: radial-gradient(circle at 50% 0, #19372f, #0e1513 42%); }
+#chat-view { position: relative; overflow: hidden; background: #f4f6f5; }
+#chat-frame { display: block; width: 100%; height: 100%; border: 0; background: #f4f6f5; }
+#chat-loading { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; color: #91a39d; background: #111816; }
+.models-shell { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 14px; height: 100%; padding: 24px; box-sizing: border-box; }
+.models-toolbar, .panel-heading, .models-toolbar-actions, .model-primary-actions, .asset-import-actions, .models-editor-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.models-toolbar h1, .models-toolbar h2, .panel-heading h2 { margin: 0; }
+.models-toolbar span { color: #63ddbd; font-size: 12px; letter-spacing: .14em; }
+.models-toolbar h1 { margin-top: 3px; font-size: 28px; }
+.models-workspace { display: grid; grid-template-columns: minmax(190px, .7fr) minmax(280px, 1.15fr) minmax(340px, 1.35fr); gap: 14px; min-height: 0; }
+.models-list-panel, .models-preview-panel, .models-editor-panel { min-width: 0; min-height: 0; padding: 16px; border: 1px solid #315348; border-radius: 18px; background: rgba(16, 29, 25, .9); box-sizing: border-box; }
+.models-list-panel, .models-editor-panel { display: flex; flex-direction: column; }
+.models-list, #models-editor { min-height: 0; overflow: auto; }
+.models-preview-panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.models-preview-stage { position: relative; min-height: 300px; overflow: hidden; border-radius: 14px; background: radial-gradient(circle, #24483e, #101a17 70%); }
+.models-preview-stage canvas { width: 100%; height: 100%; }
+.models-preview-stage > span { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; color: #8da39b; background: rgba(10, 24, 20, .96); text-align: center; white-space: pre-line; pointer-events: none; transition: opacity .12s ease; }
+.models-preview-stage > span[hidden] { display: none; }
+.models-report { padding: 10px 14px; border: 1px solid #4e7468; border-radius: 12px; background: #14251f; }
+.models-empty { margin: auto; color: #81968f; text-align: center; }
+.editor-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 16px 0; }
+.editor-tabs button { padding: 9px 6px; border: 1px solid #39564d; border-radius: 10px; color: #9db0aa; background: #12201c; }
+.editor-tabs button.active { color: #e7fff7; border-color: #58cbae; background: #1b3c33; }
+.editor-tab section { margin-bottom: 18px; }
+.models-editor-actions { margin-top: auto; padding-top: 14px; border-top: 1px solid #29453d; }
+.model-name-field { display: grid; gap: 7px; }
+.danger { color: #ffd7d7; border-color: #744545; background: #3c2020; }
+.quiet { padding: 6px 9px; color: #aac0b8; background: transparent; border: 0; }
+@media (max-width: 720px) {
+  .main-layout { grid-template-columns: 72px minmax(0, 1fr); }
+  .main-nav { padding-inline: 8px; }
+}
+@media (max-width: 1080px) {
+  .models-workspace { grid-template-columns: 180px minmax(250px, 1fr); }
+  .models-editor-panel { grid-column: 1 / -1; }
+}

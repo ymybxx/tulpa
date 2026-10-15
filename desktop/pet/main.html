@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>tulpa</title>
+    <script src="pet-assets://runtime/live2dcubismcore.min.js"></script>
+  </head>
+  <body>
+    <section id="onboarding-view" aria-label="初次设置" hidden data-i18n-aria-label="初次设置"></section>
+    <section id="settings-next-view" aria-label="设置" hidden data-i18n-aria-label="设置"></section>
+    <section id="character-view" aria-label="角色" hidden data-i18n-aria-label="角色"></section>
+    <section id="looks-view" aria-label="形象" hidden data-i18n-aria-label="形象"></section>
+    <section id="chat-next-view" aria-label="聊天" hidden data-i18n-aria-label="聊天"></section>
+    <div class="main-layout">
+      <aside class="main-nav" aria-label="主导航" data-i18n-aria-label="主导航">
+        <div class="main-brand" aria-hidden="true">🐟</div>
+        <button id="nav-chat" type="button" aria-selected="false">
+          <span aria-hidden="true">💬</span><span data-i18n="聊天">聊天</span>
+        </button>
+        <button id="nav-models" type="button" aria-selected="false">
+          <span aria-hidden="true">✨</span><span data-i18n="角色">角色</span>
+        </button>
+        <button id="nav-settings" type="button" aria-selected="true">
+          <span aria-hidden="true">⚙️</span><span data-i18n="设置">设置</span>
+        </button>
+        <button id="nav-plugins" type="button" aria-selected="false"><span aria-hidden="true">🧩</span><span data-i18n="插件">插件</span></button>
+      </aside>
+
+      <main class="main-content">
+        <section id="plugins-view" class="main-view" hidden></section>
+        <section id="chat-view" class="main-view" hidden>
+          <div id="chat-loading"><span data-i18n="正在启动本地记忆服务…">正在启动本地记忆服务…</span></div>
+          <iframe id="chat-frame" title="tulpa 聊天" allow="microphone 'src'" data-i18n-title="tulpa 聊天"></iframe>
+        </section>
+
+        <section id="models-view" class="main-view look-editor" hidden>
+          <div id="look-editor-chrome"></div>
+          <div class="models-shell">
+            <div class="le-legacy" hidden>
+              <button id="models-import-folder" type="button"><span data-i18n="导入模型文件夹">导入模型文件夹</span></button>
+              <button id="models-import-zip" type="button"><span data-i18n="导入模型 ZIP">导入模型 ZIP</span></button>
+              <div id="models-report" class="models-report" hidden></div>
+              <span id="models-count">0</span>
+              <div id="models-list" class="models-list"></div>
+              <div id="models-empty" class="models-empty"><span data-i18n="还没有可用模型">还没有可用模型</span></div>
+              <button id="model-use" type="button"><span data-i18n="设为当前模型">设为当前模型</span></button>
+            </div>
+            <section class="models-preview-panel le-preview" aria-label="实时预览" data-i18n-aria-label="实时预览">
+              <div class="le-preview__head">
+                <h2 id="models-preview-title"><span data-i18n="实时预览">实时预览</span></h2>
+                <div class="models-preview-modes"><button id="models-preview-reset" type="button" class="quiet" aria-pressed="true"><span data-i18n="定住看">定住看</span></button><button id="models-preview-animate" type="button" class="quiet" aria-pressed="false"><span data-i18n="动起来看">动起来看</span></button></div>
+              </div>
+              <div id="models-preview-stage" class="models-preview-stage">
+                <canvas id="models-preview-canvas"></canvas>
+                <span id="models-preview-placeholder"><span data-i18n="正在加载形象…">正在加载形象…</span></span>
+              </div>
+              <p id="models-preview-mode"><span data-i18n="定住看：停下动作、眨眼和晃动，方便看清参数改了哪里。只影响左边的预览。">定住看：停下动作、眨眼和晃动，方便看清参数改了哪里。只影响左边的预览。</span></p>
+            </section>
+            <section class="models-editor-panel le-panel" aria-labelledby="le-title">
+              <header class="le-header">
+                <div>
+                  <button type="button" id="look-editor-back" class="ui-back le-back"><span class="ui-back__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span><span data-i18n="全部形象">全部形象</span></button>
+                  <h1 id="le-title"><span data-i18n="形象">形象</span></h1>
+                  <p id="le-subtitle"><span data-i18n="什么状态、什么心情，用哪些动作和表情">什么状态、什么心情，用哪些动作和表情</span></p>
+                </div>
+                <span class="le-latin" id="le-latin">BEHAVIOR</span>
+              </header>
+              <div id="models-editor-empty" class="models-empty"><span data-i18n="正在读取形象…">正在读取形象…</span></div>
+              <div id="models-editor" hidden>
+                <nav class="editor-tabs le-tabs" aria-label="形象编辑分类" data-i18n-aria-label="形象编辑分类">
+                  <button type="button" data-model-tab="pools" class="active"><span data-i18n="表情动作">表情动作</span></button>
+                  <button type="button" data-model-tab="facial"><span data-i18n="说话表情">说话表情</span></button>
+                  <button type="button" data-model-tab="defaults"><span data-i18n="装扮">装扮</span></button>
+                  <button type="button" data-model-tab="idle"><span data-i18n="待机">待机</span></button>
+                  <button type="button" data-model-tab="display"><span data-i18n="更多">更多</span></button>
+                </nav>
+                <div class="le-body">
+                  <div id="model-tab-pools" class="editor-tab">
+                    <p class="behavior-help"><span data-i18n="每个状态可以配几组动作和表情，到这个状态时 TA 会从里面挑一组。点「预览」可以在左边看效果。">每个状态可以配几组动作和表情，到这个状态时 TA 会从里面挑一组。点「预览」可以在左边看效果。</span></p>
+                    <section><h3><span data-i18n="AI 状态与情绪匹配">AI 状态与情绪匹配</span></h3><div id="model-emotion-suggestions" class="emotion-analysis"></div></section>
+                    <section><h3><span data-i18n="状态">状态</span></h3><div id="model-state-behaviors"></div></section>
+                    <section><h3><span data-i18n="情绪">情绪</span></h3><div id="model-emotion-behaviors"></div></section>
+                  </div>
+                  
+                  <div id="model-tab-facial" class="editor-tab" hidden>
+                    <div id="facial-jev-missing" class="le-strip le-strip--warn" hidden>
+                      <span><span data-i18n="说话表情由决策模型实时判断，接上决策模型（百炼或 Jev）才会生效。下面的设置会先保存着">说话表情由决策模型实时判断，接上决策模型（百炼或 Jev）才会生效。下面的设置会先保存着</span></span>
+                      <button type="button" id="facial-connect-jev" class="accent"><span data-i18n="去接决策模型">去接决策模型</span></button>
+                    </div>
+                    <section class="le-card facial-test">
+                      <div class="le-card__head"><h3><span data-i18n="说一句试试">说一句试试</span></h3><span><span data-i18n="换别的形象比较，不用先换上">换别的形象比较，不用先换上</span></span></div>
+                      <label class="facial-test-zoom" hidden><span data-facial-zoom-value>2.0×</span><input data-facial-zoom type="range" min="1" max="4" step="0.1" value="2" /></label>
+                      <div class="le-say">
+                        <textarea aria-label="朗读文字" maxlength="2000" rows="2" placeholder="今天也辛苦啦，要不要休息一下？" data-i18n-aria-label="朗读文字" data-i18n-placeholder="今天也辛苦啦，要不要休息一下？"></textarea>
+                        <button type="button" data-facial-run class="accent" disabled><span data-i18n="朗读并测试">朗读并测试</span></button>
+                        <button type="button" data-facial-stop class="secondary" disabled><span data-i18n="停止">停止</span></button>
+                        <button type="button" data-facial-pan-reset class="secondary"><span data-i18n="复位预览">复位预览</span></button>
+                      </div>
+                      <p data-facial-status role="status" class="behavior-help"><span data-i18n="请先选择并加载一个模型。">请先选择并加载一个模型。</span></p>
+                      <div data-facial-sentence class="facial-test-sentence"><span data-i18n="输入文字，在左侧预览中查看表情与口型。">输入文字，在左侧预览中查看表情与口型。</span></div>
+                      <p data-facial-values class="facial-test-values behavior-help"><span data-i18n="测试时显示当前参数值。">测试时显示当前参数值。</span></p>
+                    </section>
+                    <section class="le-card">
+                      <div class="le-card__head"><h3><span data-i18n="决策模型控制的部位">决策模型控制的部位</span></h3><span><span data-i18n="打开的部位，说话时决策模型会按每句话的语气选一档让它动；右边的倍数是动作幅度">打开的部位，说话时决策模型会按每句话的语气选一档让它动；右边的倍数是动作幅度</span></span></div>
+                      <div data-facial-support class="facial-test-support"></div>
+                    </section>
+                  </div>
+                  <div id="model-tab-defaults" class="editor-tab le-outfit" hidden>
+                    <div id="model-default-suits" class="le-suits"></div>
+                    <div class="le-outfit__body">
+                    <nav class="le-rail" aria-label="装扮分类" data-i18n-aria-label="装扮分类">
+                      <button type="button" data-outfit-pane="toggles" class="active"><span data-i18n="开关">开关</span></button>
+                      <button type="button" data-outfit-pane="params"><span data-i18n="参数">参数</span></button>
+                      <button type="button" data-outfit-pane="textures"><span data-i18n="换色">换色</span></button>
+                      <button type="button" data-outfit-pane="parts"><span data-i18n="部位">部位</span></button>
+                      <button type="button" data-outfit-pane="ai" class="le-rail__last"><span data-i18n="AI 换装">AI 换装</span></button>
+                    </nav>
+                    <div class="le-panes">
+                      <div class="le-pane" data-pane="toggles"><div id="model-default-toggles"></div></div>
+                      <div class="le-pane" data-pane="params" hidden><div id="model-default-appearance"></div></div>
+                      <div class="le-pane" data-pane="textures" hidden>
+                        <div id="model-tab-appearance"><div class="model-appearance-heading">
+                      <div>
+                        <h3><span data-i18n="换色">换色</span></h3>
+                        <p id="model-appearance-summary"><span data-i18n="换同一部位的其他纹理">换同一部位的其他纹理</span></p>
+                      </div>
+                      <label class="model-appearance-filter" hidden><span data-i18n="部位筛选">部位筛选</span>
+                        <select id="model-appearance-filter"><option value="" data-i18n="全部部位">全部部位</option></select>
+                      </label>
+                    </div>
+                    <div id="model-texture-materials" class="model-texture-materials"></div>
+                  </div>
+                      </div>
+                      <div class="le-pane" data-pane="parts" hidden><div id="model-part-groups"></div></div>
+                      <div class="le-pane" data-pane="ai" hidden>
+                        <div id="model-ai-outfit"></div>
+                        <div id="model-tab-edit" hidden>
+                          <p class="behavior-help"><span data-i18n="说想要的样子，AI 重画衣服、发色等纹理。做好的会出现在「换色」里，随时换回原版。">说想要的样子，AI 重画衣服、发色等纹理。做好的会出现在「换色」里，随时换回原版。</span></p>
+                          <button id="models-ai-create" type="button" class="accent"><span data-i18n="开始 AI 换装">开始 AI 换装</span></button>
+                          <div class="model-edit-heading">
+                      <div>
+                        <h3><span data-i18n="模型预检">模型预检</span></h3>
+                        <p id="model-edit-summary"><span data-i18n="尚未扫描当前模型">尚未扫描当前模型</span></p>
+                      </div>
+                      <button id="model-edit-scan" type="button" class="secondary"><span data-i18n="重新扫描">重新扫描</span></button>
+                    </div>
+                    <div id="model-edit-parts" class="model-edit-parts"></div>
+                  
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                  <div id="model-tab-idle" class="editor-tab" hidden><div id="model-idle-fields"></div></div>
+                  <div id="model-tab-display" class="editor-tab" hidden>
+                    <label class="model-name-field"><span data-i18n="形象名称">形象名称</span><input id="model-name" maxlength="80" /></label>
+                    <div id="model-display-fields"></div>
+                    <div class="le-danger">
+                      <span><span data-i18n="删除这个形象">删除这个形象</span><small><span data-i18n="正在使用的形象不能删；先给角色换上别的">正在使用的形象不能删；先给角色换上别的</span></small></span>
+                      <button id="model-delete" type="button" class="danger"><span data-i18n="删除形象">删除形象</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer id="models-editor-actions" class="models-editor-actions le-footer">
+                <span class="le-footer__note" id="le-footer-note"><span data-i18n="改动先在左边预览，保存后桌面上的 TA 才会变">改动先在左边预览，保存后桌面上的 TA 才会变</span></span>
+                <span id="models-dirty" hidden><span data-i18n="有未保存的修改">有未保存的修改</span></span>
+                <button id="models-discard" type="button" class="secondary" disabled><span data-i18n="放弃修改">放弃修改</span></button>
+                <button id="models-save" type="button" disabled><span data-i18n="保存并应用">保存并应用</span></button>
+              </footer>
+            </section>
+            <div id="character-wizard" class="character-wizard" hidden>
+              <section class="character-wizard-panel" role="dialog" aria-modal="true" aria-labelledby="character-wizard-title">
+                <header>
+                  <div><span>IMAGE AI + LIVE2D</span><h2 id="character-wizard-title"><span data-i18n="AI 修改模型纹理">AI 修改模型纹理</span></h2></div>
+                  <button id="character-wizard-close" type="button" class="quiet" aria-label="关闭" data-i18n-aria-label="关闭">×</button>
+                </header>
+                <div id="character-wizard-body"></div>
+              </section>
+            </div>
+          
+          </div>
+        </section>
+
+      </main>
+    </div>
+    <script src="pet-assets://runtime/live2dcubismcore.min.js"></script>
+    <script type="module" src="/src/main/index.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+[project]
+name = "tulpa"
+version = "0.1.0"
+description = "Local service behind tulpa, a desktop companion with voice, Live2D characters and long-term memory"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = [
+    "desktop-companion",
+    "desktop-pet",
+    "live2d",
+    "long-term-memory",
+    "memory",
+    "recall",
+    "voice-assistant",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: AsyncIO",
+    "Framework :: FastAPI",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Typing :: Typed",
+]
+authors = [
+    { name = "illidan" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.139.2",
+    "fish-plugin-sdk",
+    "httpx[socks]>=0.28.1",
+    "huggingface-hub>=0.24.0",
+    "jsonschema>=4.23",
+    "numpy>=1.26.0",
+    "onnxruntime>=1.18.0",
+    "openai>=2.46.0",
+    "pg0-embedded>=0.14.2",
+    "pillow>=11.0.0",
+    "pydantic-settings>=2.14.2",
+    "transformers>=4.44.0",
+    "uvicorn[standard]>=0.51.0",
+    "websockets>=16.1",
+]
+
+[project.optional-dependencies]
+voice = [
+    "aec-audio-processing>=1.0.1",
+    # New local VAD is only used by the macOS arm64 LiveKit audio backend.
+    # Keep its Python upper bound out of the server's base requirements.
+    "livekit-agents==1.7.1; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version < '3.15'",
+    "livekit-plugins-silero==1.7.1; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version < '3.15'",
+    # Agents imports PyAV; newer arm64 wheels require macOS 13 or 14.
+    "av==14.2.0; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version < '3.15'",
+    "numpy>=1.26.0",
+    "pypinyin>=0.55.0",
+    "sentencepiece>=0.2.0",
+    "sherpa-onnx>=1.12.24",
+    "sherpa-onnx-core>=1.13.4",
+    "sounddevice>=0.5.2",
+    "webrtcvad-wheels>=2.0.14",
+]
+
+[project.urls]
+Homepage = "https://github.com/ymybxx/tulpa"
+Repository = "https://github.com/ymybxx/tulpa"
+Issues = "https://github.com/ymybxx/tulpa/issues"
+Changelog = "https://github.com/ymybxx/tulpa/blob/main/CHANGELOG.md"
+
+[project.scripts]
+fish-memory = "fish_memory.main:main"
+
+[build-system]
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "fish_memory"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = ["--import-mode=importlib"]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "pg0: runs a real embedded PostgreSQL instance",
+]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.ruff.lint.per-file-ignores]
+# Applied migrations are kept byte-for-byte; their SQL is not re-wrapped.
+"src/fish_memory/db/migrations.py" = ["E501"]
+# Brand artwork is generated from long inline SVG path strings.
+"desktop/pet/packaging/brand/make_brand.py" = ["E501"]
+
+[tool.ty.environment]
+python-version = "3.11"
+
+[tool.uv.workspace]
+members = [
+    "sdk/python",
+]
+
+[tool.uv.sources]
+fish-plugin-sdk = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.15.22",
+    "ty>=0.0.61",
+]
+packaging = [
+    "pyinstaller>=6.18.0,<7",
+]

@@ -1,0 +1,1 @@
+"""Background Assistant message tests."""

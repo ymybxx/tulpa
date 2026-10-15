@@ -1,0 +1,7 @@
+# Desktop-only Python 3.11 / Apple Silicon build overrides. Keep model files
+# unchanged. This upstream wheel contains arm64 binaries targeting macOS 11.
+# NumPy's same-version macOS 14 wheel uses Accelerate; select its macOS 11
+# OpenBLAS build explicitly instead of inheriting the build host's newer OS.
+# ONNX Runtime, Sherpa and AEC are supplied separately as locally built wheels.
+# Do not downgrade ONNX Runtime: 1.19.2 changed current Smart Turn decisions.
+numpy @ https://files.pythonhosted.org/packages/0e/0d/f5957185c0ee2f3e12f78715aa9e3b353fd83633316c8532b38faa37e3f6/numpy-2.4.6-cp311-cp311-macosx_11_0_arm64.whl#sha256=110f8b71aacb688ec69062bb7f6938a0f8acb01b7c1c4beb453c65b6d234584d

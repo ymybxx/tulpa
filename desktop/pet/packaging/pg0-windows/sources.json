@@ -1,0 +1,17 @@
+{
+  "source": {
+    "filename": "pg0-v0.14.2.tar.gz",
+    "url": "https://github.com/vectorize-io/pg0/archive/refs/tags/v0.14.2.tar.gz",
+    "sha256": "424e94e1a320d0f7740873e9fd585534b0be365ac3902b04a6c609ca5e903dea"
+  },
+  "postgresql": {
+    "filename": "postgresql-18.1.0-x86_64-pc-windows-msvc.zip",
+    "url": "https://github.com/theseus-rs/postgresql-binaries/releases/download/18.1.0/postgresql-18.1.0-x86_64-pc-windows-msvc.zip",
+    "sha256": "ec0390b607f04e1499de7b0ec934f5bc4d999c4b5af02dafac3c6ad07e4744da"
+  },
+  "pgvector": {
+    "filename": "pgvector-x86_64-pc-windows-msvc-pg18.tar.gz",
+    "url": "https://github.com/nicoloboschi/pgvector_compiled/releases/download/v0.18.237/pgvector-x86_64-pc-windows-msvc-pg18.tar.gz",
+    "sha256": "691e03071cf122eb6398fac7da2b5f5a3567079d372aad86b365a4d73571300b"
+  }
+}

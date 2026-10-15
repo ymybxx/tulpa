@@ -1,0 +1,604 @@
+/* 主窗口 · 形象编辑. Re-skins the model manager's DOM with ui/theme.css tokens. */
+body.look-editor-active .main-nav { display: none; }
+#models-view.look-editor {
+  position: fixed; inset: 0; z-index: 9; overflow: hidden; padding: 0;
+  font-size: 14px; line-height: 1.6; color: var(--ink); background: none;
+}
+#look-editor-chrome { position: absolute; inset: 0; }
+/* Only the navigation bar is lifted above the editor, which also fills the
+   window and came later, swallowing every click on 聊天/角色/设置. The sky
+   beside it stays underneath. */
+#look-editor-chrome .sn { position: absolute; inset: 0 auto auto 0; z-index: 2; width: 100%; height: 60px; }
+.look-editor .models-shell { position: absolute; inset: 0; display: block; padding: 0; max-width: none; background: none; }
+
+/* ---------- Panels ---------- */
+.look-editor .le-preview, .look-editor .le-panel {
+  position: absolute; top: 62px; bottom: 24px; display: flex; flex-direction: column; min-height: 0; margin: 0;
+  border: none; border-radius: 16px; background: var(--panel); color: var(--ink);
+  box-shadow: 0 1px 1px var(--sh-1), 0 14px 30px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+.look-editor .le-preview { left: 24px; width: 420px; padding: 0 10px 10px; }
+.look-editor .le-panel { left: 464px; right: 24px; padding: 0; }
+.look-editor .le-panel::before { content: ""; position: absolute; inset: 6px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--frame); pointer-events: none; }
+
+.le-preview__head { display: flex; align-items: center; gap: 8px; padding: 10px 0 8px 4px; }
+.le-preview__head h2 { flex: 1; margin: 0; font-size: 13px; font-weight: 900; letter-spacing: 0.08em; color: var(--gold-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.look-editor .models-preview-modes { display: flex; gap: 2px; padding: 3px; border-radius: 16px; background: var(--well); box-shadow: var(--well-shadow); }
+.look-editor .models-preview-modes button { border: none; min-height: 26px; padding: 0 10px; border-radius: 13px; background: transparent; box-shadow: none; color: var(--muted); font-size: 12px; font-weight: 700; }
+.look-editor .models-preview-modes button[aria-pressed="true"] { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.look-editor .models-preview-stage {
+  position: relative; flex: 1; min-height: 0; border: none; border-radius: 12px;
+  background: linear-gradient(180deg, var(--sky-2) 0%, var(--sky-3) 70%, var(--sky-4) 100%); box-shadow: inset 0 0 0 1px var(--panel-edge);
+}
+.look-editor #models-preview-placeholder {
+  color: var(--muted); border-radius: 12px; font-size: 13px;
+  background: linear-gradient(180deg, var(--sky-2) 0%, var(--sky-3) 70%, var(--sky-4) 100%);
+}
+.look-editor #models-preview-mode { margin: 8px 4px 0; font-size: 11px; color: var(--muted); }
+
+/* ---------- Editor header, tabs, footer ---------- */
+/* Over the main window's own button look. */
+.look-editor button.ui-back.le-back {
+  height: 32px; min-height: 0; padding: 0 14px 0 4px; border-radius: 16px;
+  margin-bottom: 8px; border: none; font-size: 13px; font-weight: 700;
+  color: var(--btn-2-fg); background: var(--btn-2); box-shadow: 0 2px 0 var(--btn-2-edge), 0 4px 10px var(--sh-2);
+}
+.le-header { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 14px 26px 10px; }
+.le-header h1 { margin: 0; font-size: 22px; font-weight: 900; line-height: 1.3; }
+.le-header p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.le-latin { font-family: var(--font-label); font-size: 11px; letter-spacing: 0.3em; color: var(--gold-text); }
+.look-editor #models-editor { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.look-editor #models-editor[hidden] { display: none; }
+.look-editor #models-editor-empty { position: relative; padding: 20px 26px; color: var(--muted); }
+.look-editor .le-tabs {
+  position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin: 0 26px 12px; padding: 4px;
+  border: none; border-radius: 22px; background: var(--well); box-shadow: var(--well-shadow);
+}
+.look-editor .le-tabs button { min-height: 34px; padding: 0; border-radius: 17px; background: transparent; box-shadow: none; color: var(--muted); font-size: 13px; font-weight: 700; }
+.look-editor .le-tabs button.active { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.le-body { position: relative; flex: 1; min-height: 0; overflow: auto; padding: 0 26px 14px; }
+.look-editor .le-footer {
+  position: relative; display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 14px 10px 22px; border: none;
+  border-radius: 0 0 16px 16px; font-size: 11px; color: var(--muted); background: var(--panel-2); box-shadow: inset 0 1px 0 var(--panel-edge);
+}
+.le-footer__note { flex: 1; }
+.look-editor #models-dirty { font-size: 12px; font-weight: 700; color: var(--gold-text); }
+
+/* ---------- Common controls inside the editor ---------- */
+.look-editor .le-panel button:where(:not(.ui-back)), .look-editor .le-preview button:not(.models-preview-modes button) {
+  min-height: 30px; padding: 4px 12px; border: none; border-radius: 15px; font: inherit; font-size: 12px; font-weight: 700;
+  color: var(--btn-2-fg); background: var(--btn-2); box-shadow: 0 2px 0 var(--btn-2-edge); cursor: pointer;
+}
+.look-editor .le-panel button:disabled { opacity: 0.5; cursor: default; }
+.look-editor #models-save, .look-editor .le-panel button.accent { color: var(--btn-fg); background: var(--btn); box-shadow: 0 2px 0 var(--btn-edge), 0 4px 10px var(--sh-2); }
+.look-editor .le-panel button.danger { color: var(--danger-fg); background: transparent; box-shadow: inset 0 0 0 1.5px var(--danger-fg); }
+.look-editor .le-panel input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), .look-editor .le-panel select, .look-editor .le-panel textarea {
+  min-height: 30px; padding: 4px 10px; border: none; border-radius: 8px; font: inherit; font-size: 13px;
+  color: var(--ink); background: var(--well); box-shadow: var(--well-shadow);
+}
+.look-editor .le-panel h3 { margin: 4px 0 8px; font-size: 13px; font-weight: 900; letter-spacing: 0.08em; color: var(--gold-text); }
+.look-editor .le-panel h4 { color: var(--ink); }
+.look-editor .behavior-help, .look-editor .le-panel small, .look-editor .candidate-editor-help, .look-editor .candidate-empty,
+.look-editor .default-appearance-toolbar, .look-editor .layer-selection-actions > span { color: var(--muted); }
+.look-editor .behavior-row, .look-editor .pool-row, .look-editor .candidate-editor,
+.look-editor .layer-visibility-panel, .look-editor .model-layer-list, .look-editor .emotion-analysis,
+.look-editor .facial-test, .look-editor .display-field, .look-editor .lip-adapter-status {
+  border: none; border-radius: 12px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink);
+}
+.look-editor .behavior-candidate, .look-editor .model-layer-row {
+  border: none; border-radius: 10px; background: var(--well); box-shadow: var(--well-shadow);
+}
+.look-editor .behavior-row > summary span, .look-editor .pool-row summary span, .look-editor .behavior-candidate small { color: var(--muted); }
+
+/* ---------- 编辑一组动作/表情 ---------- */
+.look-editor .candidate-editor { gap: 14px; padding: 0 12px 12px; }
+/* What the group plays, pinned while picking below. */
+.look-editor .candidate-bar {
+  position: sticky; top: 0; z-index: 2; display: grid; gap: 8px; margin: 0 -12px; padding: 12px;
+  border-radius: 12px 12px 0 0; background: var(--card); box-shadow: 0 6px 10px -8px var(--sh-2);
+}
+.candidate-bar__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.candidate-bar__actions { display: flex; gap: 6px; }
+.candidate-chosen { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; align-items: center; }
+.look-editor .candidate-chosen__empty { font-size: 12px; color: var(--muted); }
+.look-editor .candidate-chip {
+  display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 3px 0 10px; border-radius: 14px;
+  font-size: 12px; color: var(--ink); background: var(--well); box-shadow: var(--well-shadow);
+}
+.look-editor .candidate-chip b { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.look-editor .candidate-chip__kind { font-size: 10px; font-weight: 800; color: var(--gold-text); }
+.look-editor .le-panel .candidate-chip button {
+  display: grid; place-items: center; width: 22px; min-height: 22px; height: 22px; padding: 0; border-radius: 11px;
+  font-size: 13px; line-height: 1; color: var(--muted); background: transparent; box-shadow: none;
+}
+.look-editor .le-panel .candidate-chip button:hover:not(:disabled) { color: var(--ink); background: var(--card); }
+.look-editor .le-panel .candidate-chip button:disabled { opacity: 0.25; }
+.look-editor .candidate-library { display: grid; gap: 8px; }
+.look-editor .candidate-library h5 { margin: 0; font-size: 12px; font-weight: 800; color: var(--muted); }
+.candidate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.look-editor .candidate-tile {
+  display: flex; align-items: center; gap: 2px; min-width: 0; padding-right: 4px; border-radius: 10px;
+  background: var(--well); box-shadow: var(--well-shadow);
+}
+.look-editor .candidate-tile.selected { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.look-editor .le-panel .candidate-tile button.candidate-tile__pick {
+  display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; min-height: 36px; padding: 4px 4px 4px 8px;
+  border-radius: 10px; text-align: left; font-weight: 600; color: var(--ink); background: transparent; box-shadow: none;
+}
+.candidate-tile__copy { display: grid; min-width: 0; }
+.candidate-tile.renaming > .candidate-tile__copy { flex: 1; padding: 4px 4px 4px 8px; }
+.candidate-tile__copy b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.candidate-tile__copy .candidate-name-input { min-width: 0; }
+.candidate-tile__copy small { display: none; }
+.candidate-tile__box, .candidate-tile__order {
+  display: grid; place-items: center; flex: none; width: 18px; height: 18px; border-radius: 9px; font-size: 11px; font-weight: 900;
+}
+.candidate-tile__box { box-shadow: inset 0 0 0 1.5px var(--muted); opacity: 0.6; }
+.candidate-tile__order { color: #3B4354; background: var(--accent); }
+.look-editor .le-panel .candidate-tile button.candidate-tile__icon {
+  display: grid; place-items: center; flex: none; width: 26px; min-height: 26px; height: 26px; padding: 0; border-radius: 13px;
+  font-size: 11px; color: var(--muted); background: transparent; box-shadow: none;
+}
+.look-editor .le-panel .candidate-tile button.candidate-tile__icon:hover:not(:disabled) { color: var(--ink); background: var(--panel); }
+.candidate-tile.renaming .candidate-tile__icon { display: none; }
+
+/* ---------- 装扮 ---------- */
+.le-outfit:not([hidden]) { display: flex; flex-direction: column; gap: 10px; min-height: 100%; }
+.le-outfit__body { display: flex; gap: 10px; flex: 1; min-height: 0; }
+.le-suits { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 8px 6px 12px; border-radius: 14px; background: var(--card); box-shadow: var(--card-shadow); }
+.le-suits__label { flex-shrink: 0; font-size: 12px; font-weight: 900; letter-spacing: 0.08em; color: var(--gold-text); }
+.le-suits__list { display: flex; flex: 1; gap: 6px; min-width: 0; overflow-x: auto; }
+.le-suits__empty, .le-suits__status { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.le-suits__status { flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.le-suit { display: inline-flex; align-items: center; flex-shrink: 0; border-radius: 14px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-suit.on { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.look-editor .le-suit button { min-height: 28px; padding: 0 4px 0 12px; background: transparent; box-shadow: none; font-size: 12px; color: var(--ink); }
+.look-editor .le-suit button.le-suit__delete { width: 22px; padding: 0; color: var(--muted); opacity: 0.5; }
+.look-editor .le-suit:hover button.le-suit__delete { opacity: 1; }
+.le-name-form { display: flex; align-items: center; gap: 8px; flex: 1; }
+.look-editor .le-name-form input { flex: 1; min-width: 0; }
+.le-name-form__error { font-size: 11px; color: var(--warn-fg); }
+.le-pinbar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 6px 6px 6px 12px; border-radius: 12px; font-size: 12px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-pinbar[hidden] { display: none; }
+.le-pinbar > span { flex: 1; }
+.look-editor .le-pane__head input[type="search"] { margin-left: auto; width: 140px; }
+.look-editor .le-pane__head input[type="search"][hidden] { display: none; }
+.look-editor .le-pane__head input[type="search"][hidden] + button { margin-left: auto; }
+.look-editor .le-toggle[hidden] { display: none; }
+/* In 装扮 the parameter list is the pane itself. */
+.look-editor .le-params > summary { display: none; }
+.look-editor .le-params { border: none; background: transparent; box-shadow: none; padding: 0; }
+.le-rail { position: sticky; top: 0; align-self: flex-start; flex-shrink: 0; width: 88px; display: flex; flex-direction: column; gap: 4px; padding: 6px; border-radius: 14px; background: var(--well); box-shadow: var(--well-shadow); }
+.look-editor .le-rail button { min-height: 52px; border-radius: 10px; background: transparent; box-shadow: none; color: var(--muted); font-size: 12px; }
+.look-editor .le-rail button.active { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+/* AI 换装 is a different kind of tool: set apart by a line, not by empty space. */
+.look-editor .le-rail .le-rail__last { position: relative; margin-top: 13px; }
+.look-editor .le-rail .le-rail__last::before {
+  content: ""; position: absolute; top: -9px; left: 12px; right: 12px; height: 1px; background: var(--panel-edge);
+}
+.le-panes { flex: 1; min-width: 0; padding: 10px 12px 12px; border-radius: 14px; background: var(--card); box-shadow: var(--card-shadow); }
+.le-pane__head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.le-pane__head h3 { margin: 0; }
+.le-pane__head span { font-size: 12px; color: var(--muted); }
+.le-toggles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.le-toggle { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 10px 0 12px; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-toggle.on { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.look-editor button.le-toggle__name {
+  flex: 1; min-width: 0; min-height: 0; padding: 2px 4px; margin-left: -4px; border: none; border-radius: 6px; background: transparent; box-shadow: none;
+  font-size: 13px; font-weight: 700; text-align: left; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: text;
+}
+.look-editor button.le-toggle__name:hover { background: var(--chip); }
+.look-editor input.le-toggle__rename { flex: 1; min-width: 0; min-height: 26px; padding: 2px 6px; font-size: 13px; font-weight: 700; }
+.look-editor button.le-switch {
+  position: relative; flex-shrink: 0; width: 40px; min-height: 0; height: 22px; padding: 0; border-radius: 11px;
+  background: var(--iconOff, #C9C3B6); box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+.look-editor button.le-switch[aria-checked="true"] { background: var(--switch-on); }
+.le-switch__knob { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 8px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); transition: left 120ms ease; }
+.le-switch[aria-checked="true"] .le-switch__knob { left: 21px; }
+.le-layer-fallback { margin-top: 12px; }
+.le-layer-fallback > summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+
+/* ---------- 更多 ---------- */
+.look-editor .model-name-field { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; font-weight: 700; }
+.look-editor #model-display-fields { display: flex; flex-direction: column; gap: 10px; }
+/* A setting row gets the same card as the panels around it. */
+.look-editor .lip-strength-row {
+  padding: 13px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  color: var(--ink); background: var(--card); box-shadow: var(--card-shadow);
+}
+.look-editor .lip-strength-row span { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.le-danger { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: var(--card); box-shadow: var(--card-shadow); }
+.le-danger span { flex: 1; display: flex; flex-direction: column; font-size: 13px; font-weight: 700; }
+.le-danger small { font-weight: 400; }
+
+/* ---------- Leftover model-manager boxes ---------- */
+.look-editor .lip-test-panel, .look-editor .lip-adapter-advanced, .look-editor .facial-test-sentence, .look-editor .model-edit-parts > *,
+.look-editor .emotion-analysis, .look-editor .texture-material, .look-editor .model-texture-materials > * {
+  border: none; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink);
+}
+.look-editor .lip-test-panel p, .look-editor .lip-adapter-status span, .look-editor .lip-adapter-advanced summary,
+.look-editor .model-edit-limit, .look-editor #model-appearance-summary, .look-editor #model-edit-summary { color: var(--muted); }
+.look-editor .lip-test-panel h3 { color: var(--gold-text); }
+/* Zoom is a gesture on the preview itself, not a slider. */
+.look-editor .facial-test-zoom { display: none; }
+.look-editor .facial-test > p:first-child { margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+.look-editor .facial-test { padding: 12px 14px; }
+/* ---------- 待机 ---------- */
+.look-editor .natural-idle-panel { display: grid; gap: 18px; }
+.look-editor .idle-heading { margin: 0 0 10px; font-size: 13px; font-weight: 800; color: var(--ink); }
+.idle-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 10px; }
+.look-editor .le-panel button.idle-choice {
+  display: grid; align-content: start; gap: 4px; min-height: 76px; padding: 12px 14px; border-radius: 14px; text-align: left;
+  font-weight: 400; color: var(--ink); background: var(--card); box-shadow: var(--card-shadow);
+}
+.look-editor .le-panel button.idle-choice:hover { box-shadow: 0 0 0 1.5px var(--gold-line), var(--card-shadow); }
+.look-editor .le-panel button.idle-choice[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--accent), 0 4px 12px var(--sh-2); }
+.idle-choice b { font-size: 15px; font-weight: 800; }
+.look-editor .idle-choice small { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.look-editor .idle-tune { display: grid; gap: 12px; padding: 14px 16px; border-radius: 14px; background: var(--card); box-shadow: var(--card-shadow); }
+.look-editor .idle-tune .idle-heading { margin: 0; }
+.idle-field { display: grid; grid-template-columns: minmax(7em, 10em) minmax(0, 1fr); align-items: center; gap: 12px; font-size: 13px; }
+.idle-slider { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.idle-slider input[type="range"] { flex: 1; min-width: 0; }
+.look-editor .idle-slider small { flex: none; min-width: 3em; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.idle-slider small:last-child { text-align: right; }
+.look-editor .le-panel button.idle-reset { justify-self: start; }
+.look-editor .idle-fixes { display: grid; gap: 12px; }
+.look-editor .idle-fixes summary { cursor: pointer; font-size: 12px; color: var(--muted); }
+.look-editor .idle-fixes[open] summary { margin-bottom: 4px; }
+.look-editor .idle-fixes p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.look-editor .idle-fixes select { min-width: 0; width: 100%; }
+.look-editor .lip-adapter-advanced > div > label { min-width: 0; }
+.look-editor .lip-adapter-advanced select { min-width: 0; width: 100%; }
+/* 自己眨眼 drawn as a switch. */
+.look-editor .natural-idle-panel input[type="checkbox"] {
+  appearance: none; position: relative; width: 40px; height: 22px; border-radius: 11px; margin: 0;
+  background: #C9C3B6; box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2); cursor: pointer;
+}
+.look-editor .natural-idle-panel input[type="checkbox"]::after {
+  content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 8px; background: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); transition: left 120ms ease;
+}
+.look-editor .natural-idle-panel input[type="checkbox"]:checked { background: var(--switch-on); }
+.look-editor .natural-idle-panel input[type="checkbox"]:checked::after { left: 21px; }
+.look-editor input[type="range"] { accent-color: var(--gold-line); }
+
+/* ---------- Cards and 说话表情 rows ---------- */
+.le-card { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding: 12px 14px; border-radius: 12px; background: var(--card); box-shadow: var(--card-shadow); }
+.le-card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.look-editor .le-card__head h3 { margin: 0; }
+.le-card__head span { font-size: 11px; color: var(--muted); }
+.le-say { display: flex; align-items: flex-start; gap: 8px; }
+.look-editor .le-say textarea { flex: 1; min-width: 0; resize: vertical; }
+.le-strip { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 8px 8px 8px 12px; border-radius: 12px; font-size: 12px; }
+.le-strip span { flex: 1; }
+.le-strip--warn { color: var(--warn-fg); background: var(--warn-bg); }
+.le-strip[hidden] { display: none; }
+.look-editor .facial-test-sentence { padding: 8px 12px; border-radius: 10px; font-size: 13px; }
+.look-editor .facial-test-values { margin: 0; font-size: 11px; }
+.look-editor .facial-test-support { display: flex; flex-direction: column; }
+.le-param { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 0; box-shadow: inset 0 1px 0 var(--chip); flex-wrap: wrap; }
+.le-param:first-child { box-shadow: none; }
+.le-param__text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.3; }
+.le-param__text b { font-size: 13px; }
+.look-editor .le-param__text small { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.le-param__scale { width: 40px; text-align: right; font-size: 12px; font-weight: 700; color: var(--muted); }
+.le-param__scale.changed { color: var(--gold-text); }
+.le-param > .facial-binding-editor, .le-param > .custom-facial-parameter-editor, .le-param > div:last-child:not(:only-child) { flex-basis: 100%; }
+.le-param--add > span { flex: 1; font-size: 11px; color: var(--muted); }
+.le-removed { padding: 6px 0; box-shadow: inset 0 1px 0 var(--chip); }
+.le-removed > summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+.look-editor button.le-toggle__delete { width: 24px; min-height: 24px; padding: 0; background: transparent; box-shadow: none; color: var(--muted); font-size: 15px; line-height: 1; opacity: 0.6; }
+.look-editor .le-toggle:hover button.le-toggle__delete { opacity: 1; }
+.look-editor button.le-toggle__delete:hover { color: var(--warn-fg); background: var(--warn-bg); }
+
+/* ---------- 装扮 › 部位 ---------- */
+.le-strip--info { color: var(--info-fg, #244A78); background: var(--info-bg, #D6E6F5); }
+.le-groups { display: flex; flex-direction: column; }
+.le-group { box-shadow: inset 0 1px 0 var(--chip); }
+.le-group:first-child { box-shadow: none; }
+.le-group__line { display: flex; align-items: center; gap: 8px; min-height: 40px; }
+.le-group__dot { flex-shrink: 0; width: 12px; height: 12px; border-radius: 6px; }
+.le-group__dot--empty { box-shadow: inset 0 0 0 1.5px var(--muted); }
+.le-group__name { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.le-group__name small { margin-left: 6px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.look-editor .le-group__line input { flex: 1; min-width: 0; }
+.look-editor button.le-link { min-height: 26px; padding: 0 8px; border: none; background: transparent; box-shadow: none; font-size: 12px; color: var(--gold-text); }
+.look-editor button.le-link--muted { color: var(--muted); }
+.look-editor button.le-group__delete { width: 26px; min-height: 26px; padding: 0; border: none; background: transparent; box-shadow: none; font-size: 15px; line-height: 1; color: var(--muted); }
+.look-editor button.le-group__delete:hover { color: var(--warn-fg); background: var(--warn-bg); }
+.le-group__detail { display: flex; flex-direction: column; gap: 8px; padding: 0 0 12px 20px; }
+.le-pieces { display: flex; flex-wrap: wrap; gap: 6px; }
+.le-piece { position: relative; width: 64px; height: 64px; border-radius: 8px; background: repeating-conic-gradient(#8A8A92 0% 25%, #A3A3AB 0% 50%) 50% / 12px 12px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08); }
+.le-piece img { width: 100%; height: 100%; object-fit: contain; }
+.look-editor button.le-piece__remove { position: absolute; right: -5px; top: -5px; width: 18px; min-height: 18px; height: 18px; padding: 0; border: none; border-radius: 9px; background: var(--card); box-shadow: 0 1px 3px var(--sh-2); font-size: 11px; line-height: 1; color: var(--muted); opacity: 0; }
+.le-piece:hover .le-piece__remove { opacity: 1; }
+.le-pieces__more { align-self: center; font-size: 11px; color: var(--muted); }
+.le-pieces__pick { display: flex; align-items: center; height: 64px; padding: 0 10px; border-radius: 8px; box-shadow: inset 0 0 0 1.5px var(--gold-line); font-size: 11px; font-weight: 700; color: var(--gold-text); }
+.le-by-name { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+.le-by-name label { color: var(--muted); }
+.look-editor .le-by-name input { width: 180px; }
+.le-by-name__hint { color: var(--muted); }
+
+/* ---------- 装扮 › AI 换装 ---------- */
+.look-editor [data-pane="ai"] #model-ai-outfit { display: flex; flex-direction: column; gap: 10px; min-height: 100%; }
+.le-steps { display: flex; gap: 2px; margin: 0 0 0 auto; padding: 3px; list-style: none; border-radius: 15px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-steps li { height: 24px; padding: 0 10px; border-radius: 12px; font-size: 11px; font-weight: 700; line-height: 24px; color: var(--muted); white-space: nowrap; }
+.le-steps li.on { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.le-ai__row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.le-ai__grow { flex: 1; min-width: 0; }
+.le-ai__muted { font-size: 12px; color: var(--muted); }
+.le-ai__warn { font-size: 12px; color: var(--warn-fg); }
+.look-editor select.le-ai__add { min-height: 28px; padding: 0 10px; border-radius: 14px; font-size: 12px; font-weight: 700; }
+.le-ai__list { display: flex; flex-direction: column; padding: 2px 10px; border-radius: 10px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-ai__empty { margin: 10px 0; font-size: 12px; color: var(--muted); }
+.le-ai__item { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 0; font-size: 13px; box-shadow: inset 0 1px 0 var(--chip); }
+.le-ai__item:first-child { box-shadow: none; }
+.le-ai__item--top { align-items: flex-start; }
+.le-ai__item--top .le-group__dot { margin-top: 5px; }
+.le-ai__name { flex-shrink: 0; width: 88px; }
+.le-ai__label { font-size: 13px; font-weight: 900; }
+.look-editor #model-ai-outfit textarea { box-sizing: border-box; width: 100%; min-height: 60px; padding: 8px 12px; border: none; border-radius: 10px; font: inherit; font-size: 13px; color: var(--ink); background: var(--well); box-shadow: var(--well-shadow); resize: vertical; }
+.le-ai__ideas { display: flex; flex-wrap: wrap; gap: 6px; }
+.look-editor button.le-ai__idea { min-height: 24px; padding: 0 10px; border: none; border-radius: 12px; background: transparent; box-shadow: inset 0 0 0 1px var(--gold-line); font-size: 11px; color: var(--gold-text); }
+.le-ai__ref { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; overflow: visible; background: var(--well); }
+.le-ai__ref img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.le-ai__ref:hover .le-piece__remove { opacity: 1; }
+.look-editor button.le-ai__ref--add { min-height: 40px; padding: 0; border: none; background: transparent; box-shadow: inset 0 0 0 1.5px var(--gold-line); font-size: 18px; color: var(--gold-text); }
+.le-ai__footer { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 8px; box-shadow: inset 0 1px 0 var(--chip); }
+.le-ai__footer .le-ai__muted { font-size: 11px; line-height: 1.5; }
+.le-ai__footer--stack { flex-direction: column; align-items: stretch; }
+.le-ai__pieces { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 10px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-ai__piece-list { display: flex; flex-direction: column; gap: 8px; max-height: 460px; overflow-y: auto; padding: 3px; margin: -3px; }
+.le-ai__piece-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 8px; }
+.le-ai__piece-section { position: sticky; top: -3px; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 8px 4px 4px; background: var(--well); font-size: 13px; cursor: pointer; }
+.le-ai__piece-section input { margin: 0; accent-color: var(--gold-line); }
+.le-ai__piece { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 6px 8px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.le-ai__piece input { position: absolute; left: 10px; top: 10px; margin: 0; accent-color: var(--gold-line); }
+.le-ai__piece span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.le-locator { display: block; border-radius: 8px; background: #1B2130; }
+.le-piece .le-locator { width: 100%; height: 100%; }
+.le-ai__piece.on { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent); }
+
+.le-ai__chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.le-ai__chip { padding: 2px 8px; border-radius: 11px; font-size: 11px; line-height: 18px; background: var(--card); }
+.le-ai__chip b, .le-ai__edit b { color: var(--gold-text); }
+.le-ai__edit { display: flex; align-items: center; gap: 6px; width: 100%; font-size: 11px; }
+.look-editor .le-ai__edit input { flex: 1; min-width: 0; }
+.le-ai__bar { position: relative; display: block; height: 8px; border-radius: 4px; overflow: hidden; background: var(--well); }
+.le-ai__bar span { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--accent); transition: width 300ms ease; }
+.le-strip--ok { color: var(--ok-fg, #24543F); background: var(--ok-bg, #D7EADF); }
+.le-ai__pair { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.le-ai__arrow { font-size: 12px; color: var(--muted); }
+.le-ai__thumb { width: 36px; height: 36px; border-radius: 8px; background: repeating-conic-gradient(#8A8A92 0% 25%, #A3A3AB 0% 50%) 50% / 8px 8px; }
+.le-ai__thumb img { width: 100%; height: 100%; object-fit: contain; }
+.le-ai__stack { display: flex; flex-direction: column; line-height: 1.3; }
+.le-stack { position: absolute; z-index: 3; display: flex; flex-direction: column; gap: 2px; min-width: 150px; padding: 6px; border-radius: 12px; background: var(--card); box-shadow: 0 8px 22px var(--sh-3); color: var(--ink); }
+.le-stack__row { display: flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 6px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.le-stack__row:hover { background: var(--well); }
+.look-editor button.le-compare { position: absolute; right: 12px; bottom: 12px; z-index: 3; min-height: 30px; padding: 0 12px; border: none; border-radius: 15px; background: var(--card); box-shadow: 0 2px 0 var(--btn-2-edge), 0 6px 14px var(--sh-2); font-size: 12px; font-weight: 700; color: var(--ink); user-select: none; }
+/* The stage's old loading-overlay rule targets every span inside it. */
+.look-editor .models-preview-stage .le-stack span {
+  position: static; inset: auto; display: inline-block; padding: 0; background: none; color: inherit;
+  text-align: left; white-space: normal; pointer-events: auto; place-items: normal;
+}
+.look-editor .models-preview-stage .le-stack .le-group__dot { flex-shrink: 0; width: 12px; height: 12px; border-radius: 6px; }
+.look-editor .models-preview-stage .le-stack > .le-ai__muted { padding: 2px 6px 4px; font-size: 11px; color: var(--muted); }
+/* The line under the title is read whole: the steps move down rather than cut it. */
+.look-editor [data-pane="ai"] .le-pane__head {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; column-gap: 8px; row-gap: 10px;
+}
+.look-editor [data-pane="ai"] .le-pane__head h3 { white-space: nowrap; }
+.look-editor [data-pane="ai"] .le-pane__head .le-steps { grid-column: 1 / -1; justify-self: start; margin: 0; }
+
+/* ---------- 装扮 › 换色 ---------- */
+.look-editor #model-texture-materials { display: flex; flex-direction: column; gap: 12px; }
+.look-editor .model-appearance-filter[hidden] { display: none; }
+.le-swatch-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--muted); }
+.le-swatch-parts { display: flex; flex-wrap: wrap; gap: 4px; padding: 3px; border-radius: 15px; background: var(--well); box-shadow: var(--well-shadow); align-self: flex-start; }
+.look-editor .le-swatch-parts button { min-height: 24px; padding: 0 10px; border: none; border-radius: 12px; background: transparent; box-shadow: none; font-size: 12px; color: var(--muted); }
+.look-editor .le-swatch-parts button.on { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.le-swatch-part { display: flex; flex-direction: column; gap: 8px; }
+.le-swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.le-swatch { position: relative; display: flex; flex-direction: column; gap: 4px; }
+.look-editor button.le-swatch__pick { position: relative; height: 72px; padding: 0; border: none; border-radius: 12px; overflow: visible;
+  background: repeating-conic-gradient(#8A8A92 0% 25%, #A3A3AB 0% 50%) 50% / 10px 10px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px var(--sh-1); }
+.le-swatch.on button.le-swatch__pick { box-shadow: 0 0 0 2.5px var(--accent), 0 4px 12px var(--sh-2); }
+.le-swatch__pick img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+.le-swatch__ai { position: absolute; left: 6px; top: 6px; padding: 1px 6px; border-radius: 6px; background: rgba(30, 36, 52, 0.6); font-size: 10px; font-weight: 700; color: #FFFFFF; }
+.le-swatch__check { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 11px; background: var(--accent); font-size: 12px; font-weight: 900; color: #3B4354; }
+.le-swatch__label { font-size: 12px; font-weight: 700; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.le-swatch:hover .le-piece__remove { opacity: 1; }
+.le-groups__footer { display: flex; align-items: flex-start; gap: 12px; }
+.le-groups__footer p { flex: 1; margin: 0; }
+.le-ai__piece.warn { box-shadow: 0 0 0 1.5px var(--warn-fg); }
+.le-ai__piece small { font-size: 11px; }
+
+/* ---------- Preview zoom ---------- */
+.look-editor .models-preview-stage.preview-view-zoomed canvas { cursor: grab; }
+.look-editor .models-preview-stage.preview-view-dragging canvas { cursor: grabbing; }
+.look-editor .models-preview-stage .preview-zoom-reset {
+  position: absolute; left: 10px; bottom: 10px; z-index: 2; min-height: 28px; padding: 0 12px;
+  border: none; border-radius: 14px; background: var(--card); color: var(--ink); font-size: 12px; font-weight: 700;
+  box-shadow: 0 2px 8px var(--sh-2);
+}
+.look-editor .models-preview-stage .preview-zoom-reset[hidden] { display: none; }
+
+/* ---------- 换色 · recolor ---------- */
+.le-recolor { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow); font-size: 13px; }
+.le-recolor > .le-ai__muted { font-size: 12px; }
+.le-recolor__colors { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.look-editor button.le-recolor__dot { width: 28px; height: 28px; min-height: 0; padding: 0; border: 2px solid var(--card); border-radius: 50%; box-shadow: 0 1px 4px var(--sh-2); }
+.look-editor button.le-recolor__dot[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--accent), 0 2px 6px var(--sh-2); }
+.le-recolor__custom { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); cursor: pointer; }
+.le-recolor__custom input { width: 30px; height: 30px; padding: 0; border: none; background: none; cursor: pointer; }
+
+/* ---------- AI 换装 · what happens to each sentence ---------- */
+.le-ai__plan { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow); font-size: 13px; }
+.le-ai__plan-row { display: flex; align-items: center; gap: 10px; }
+.le-ai__plan-tag { flex-shrink: 0; min-width: 64px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 800; text-align: center; background: var(--card); color: var(--muted); }
+.le-ai__plan-row--repaint .le-ai__plan-tag { color: var(--gold-text); }
+.le-ai__plan-row--unsupported .le-ai__plan-tag, .le-ai__plan-row--unselected .le-ai__plan-tag { color: #E0916A; }
+.le-swatch__hint { font-size: 12px; color: var(--muted); }
+.look-editor button.le-swatch__delete { align-self: center; min-height: 22px; padding: 0 6px; font-size: 11px; }
+.le-swatch__confirm { display: flex; justify-content: center; gap: 2px; }
+.look-editor .le-swatch__confirm button { min-height: 22px; padding: 0 6px; font-size: 11px; }
+
+/* ---------- 说话表情 · a part's settings open in place ---------- */
+/* The list grows with an open editor instead of squeezing every row into a fixed height. */
+.look-editor .facial-test-support { max-height: none; overflow: visible; }
+.look-editor .facial-test-support > * { flex-shrink: 0; }
+.look-editor .facial-binding-editor {
+  display: flex; flex-direction: column; gap: 10px; margin: 6px 0 10px; padding: 14px 16px;
+  border: none; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow);
+  font-size: 13px; color: var(--ink);
+}
+.look-editor .facial-binding-editor label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.look-editor .facial-binding-editor .facial-binding-enabled { flex-direction: row; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: var(--ink); }
+.look-editor .facial-binding-editor select,
+.look-editor .facial-binding-editor input[type="number"],
+.look-editor .facial-binding-editor input[type="text"],
+.look-editor .facial-binding-editor textarea {
+  padding: 8px 10px; border: 1px solid var(--panel-edge); border-radius: 8px;
+  background: var(--card); color: var(--ink); font-size: 13px; font-weight: 400;
+}
+.look-editor .facial-binding-editor input[type="checkbox"] { accent-color: var(--gold-line); }
+.look-editor .facial-binding-editor input[type="range"] { accent-color: var(--gold-line); }
+.look-editor .facial-binding-hint, .look-editor .facial-binding-feedback { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.look-editor .facial-binding-range { margin: 0; }
+.look-editor .facial-binding-criteria { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 12px; border: none; border-radius: 10px; background: var(--chip); }
+.look-editor .facial-binding-criteria label { margin: 0; }
+.look-editor .facial-binding-editor .facial-test-actions { display: flex; gap: 8px; justify-content: flex-end; margin: 0; }
+.look-editor .facial-decision-level button { align-self: flex-end; width: auto; min-height: 24px; margin-top: 0; padding: 0 10px; background: transparent; box-shadow: none; color: var(--muted); font-size: 12px; font-weight: 700; }
+.look-editor .facial-decision-level button:hover { color: var(--warn-fg); background: var(--warn-bg); }
+.look-editor .facial-binding-criteria [data-decision-add] { align-self: flex-start; }
+
+/* ---------- 说话表情 · part settings, in order ---------- */
+.look-editor button.le-param__name { align-self: flex-start; min-height: 0; padding: 0; border: none; background: none; box-shadow: none; font-size: 13px; font-weight: 800; color: var(--ink); text-align: left; cursor: text; }
+.look-editor button.le-param__name:hover { color: var(--gold-text); }
+.look-editor input.le-param__rename { width: 180px; padding: 3px 8px; border: 1px solid var(--gold-line); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 13px; font-weight: 800; }
+.look-editor .facial-binding-section { display: flex; flex-direction: column; gap: 8px; }
+.look-editor .facial-binding-section > h4 { margin: 0; font-size: 12px; font-weight: 800; color: var(--gold-text); }
+.look-editor .facial-binding-inline { flex-direction: row !important; align-items: center; gap: 8px; }
+.look-editor .facial-binding-inline select { flex: 1; }
+.look-editor .facial-binding-inline input[type="number"] { width: 80px; }
+.look-editor .facial-binding-try { flex-direction: row !important; align-items: center; gap: 10px; }
+.look-editor .facial-binding-try input[type="range"] { flex: 1; }
+.look-editor .facial-binding-slider-value { min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.look-editor .facial-binding-range { display: flex; gap: 10px; }
+.look-editor .facial-binding-range label { flex: 1; }
+.look-editor .facial-binding-more > summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--muted); }
+.look-editor .facial-binding-more[open] > summary { margin-bottom: 6px; }
+.look-editor .facial-binding-ai { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--chip); }
+.look-editor .facial-binding-grow { flex: 1; }
+.look-editor .le-seg { display: inline-flex; align-self: flex-start; gap: 2px; padding: 3px; border-radius: 15px; background: var(--card); }
+.look-editor .le-seg button { min-height: 26px; padding: 0 12px; border: none; border-radius: 12px; background: transparent; box-shadow: none; font-size: 12px; font-weight: 700; color: var(--muted); }
+.look-editor .le-seg button[aria-pressed="true"] { color: var(--ink); background: var(--panel); box-shadow: 0 0 0 1.5px var(--accent); }
+.look-editor .facial-decision-steps { display: flex; flex-direction: column; gap: 6px; }
+.look-editor .facial-decision-steps[hidden] { display: none; }
+.look-editor .facial-decision-level { display: grid; grid-template-columns: 1fr 72px 28px; align-items: center; gap: 8px; }
+.look-editor .facial-decision-value { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.look-editor button.facial-decision-remove { width: 26px; min-height: 26px; padding: 0; border: none; background: transparent; box-shadow: none; color: var(--muted); font-size: 15px; }
+.look-editor button.facial-decision-remove:hover { color: var(--warn-fg); background: var(--warn-bg); }
+.look-editor .facial-binding-criteria [data-decision-add] { align-self: flex-start; }
+.look-editor .facial-binding-inline select { flex: 1; width: auto; min-width: 0; }
+.look-editor .facial-binding-inline .le-link { flex-shrink: 0; }
+.look-editor .facial-binding-ai { flex-direction: column; align-items: stretch; }
+.look-editor .facial-binding-ai > h4 { margin: 0; font-size: 13px; font-weight: 800; color: var(--gold-text); }
+.look-editor .facial-binding-head { min-height: 24px; }
+.look-editor .facial-binding-head { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; background: var(--chip); }
+.look-editor .facial-binding-head .facial-binding-hint { margin: 0; }
+.look-editor .facial-binding-head button { flex-shrink: 0; }
+.look-editor .facial-decision-level--named { grid-template-columns: 28px 1fr 72px 28px; }
+.look-editor .facial-decision-prefix { font-size: 13px; color: var(--gold-text); text-align: center; }
+
+/* ---------- 说话表情 · part editor: two cards and one footer ---------- */
+.look-editor .facial-binding-editor { flex-basis: 100%; gap: 12px; margin: 4px 0 14px; padding: 0; background: none; box-shadow: none; }
+.look-editor .fbe-body { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 12px; align-items: start; }
+@media (max-width: 1180px) { .look-editor .fbe-body { grid-template-columns: minmax(0, 1fr); } }
+.look-editor .fbe-card { display: flex; flex-direction: column; gap: 14px; padding: 14px 16px 16px; border-radius: 14px; background: var(--well); box-shadow: var(--well-shadow); }
+.look-editor .fbe-card__head { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+.look-editor .fbe-card__head h4 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; color: var(--gold-text); }
+.look-editor .fbe-grow { flex: 1; }
+.look-editor .fbe-field { display: flex; flex-direction: column; gap: 6px; }
+.look-editor .fbe-caption { font-size: 11px; font-weight: 700; color: var(--muted); }
+.look-editor .fbe-note { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.look-editor .fbe-value { font-size: 13px; color: var(--ink); }
+.look-editor .facial-binding-editor .fbe-field input[type="text"],
+.look-editor .facial-binding-editor .fbe-field input[type="number"],
+.look-editor .facial-binding-editor .fbe-field select,
+.look-editor .facial-binding-editor .fbe-card textarea,
+.look-editor .facial-binding-editor .facial-decision-level input[type="text"] {
+  height: 34px; padding: 0 10px; border: 1px solid transparent; border-radius: 8px;
+  background: var(--card); color: var(--ink); font-size: 13px; font-weight: 500;
+  box-shadow: inset 0 0 0 1px var(--panel-edge);
+}
+.look-editor .facial-binding-editor .fbe-card textarea { height: auto; padding: 8px 10px; line-height: 1.6; }
+.look-editor .facial-binding-editor input:focus, .look-editor .facial-binding-editor select:focus, .look-editor .facial-binding-editor textarea:focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--gold-line); }
+.look-editor .fbe-row { display: flex; align-items: center; gap: 10px; }
+.look-editor .fbe-row select { flex: 1; min-width: 0; width: auto; }
+.look-editor .fbe-row .le-link { flex-shrink: 0; }
+.look-editor .fbe-outputs { display: flex; flex-direction: column; gap: 10px; }
+.look-editor .fbe-output { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 10px; background: var(--card); box-shadow: inset 0 0 0 1px var(--panel-edge); }
+.look-editor .fbe-output .le-link[hidden] { display: none; }
+.look-editor .fbe-field > button.le-link { align-self: flex-start; }
+.look-editor .fbe-try { display: flex; align-items: center; gap: 10px; }
+.look-editor .fbe-try input[type="range"] { flex: 1; min-width: 0; accent-color: var(--gold-line); }
+.look-editor .fbe-chip { min-width: 44px; padding: 2px 8px; border-radius: 10px; background: var(--chip); font-size: 12px; font-variant-numeric: tabular-nums; text-align: center; color: var(--ink); }
+.look-editor .fbe-range { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.look-editor .facial-binding-editor .fbe-range label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 600; color: var(--muted); }
+.look-editor .fbe-range label[hidden] { display: none; }
+.look-editor .fbe-amp { display: flex; align-items: center; gap: 10px; }
+.look-editor .facial-binding-editor .fbe-amp input[type="number"] { width: 72px; flex: none; }
+.look-editor .fbe-motion { display: flex; flex-direction: column; gap: 6px; }
+.look-editor .fbe-motion .le-seg { flex-wrap: wrap; }
+.look-editor .fbe-count { width: 92px !important; flex: none; }
+.look-editor .fbe-foot { display: flex; align-items: center; gap: 12px; padding: 0 4px; }
+.look-editor .fbe-feedback { flex: 1; margin: 0; font-size: 12px; color: var(--muted); }
+.look-editor .fbe-actions { display: flex; gap: 8px; }
+.look-editor button.fbe-danger { color: var(--danger-fg); }
+.look-editor button.fbe-small { min-height: 28px; padding: 0 12px; font-size: 12px; }
+/* The steps inside the right card. */
+.look-editor .fbe-card .facial-binding-criteria { gap: 10px; padding: 0; background: none; }
+.look-editor .fbe-card .facial-decision-level { grid-template-columns: minmax(0, 1fr) auto 26px; gap: 8px; }
+.look-editor .fbe-card .facial-decision-level--named { grid-template-columns: 22px minmax(0, 1fr) auto 26px; }
+.look-editor .fbe-card .facial-decision-value { min-width: 48px; padding: 2px 8px; border-radius: 10px; background: var(--chip); font-size: 12px; text-align: center; color: var(--ink); }
+.look-editor .fbe-card .facial-binding-more > summary { font-size: 12px; font-weight: 700; color: var(--muted); }
+.look-editor .fbe-card .facial-decision-level { grid-template-columns: minmax(0, 1fr) 64px 26px; }
+.look-editor .fbe-card .facial-decision-level--named { grid-template-columns: 22px minmax(0, 1fr) 64px 26px; }
+.look-editor .fbe-card .facial-decision-value { min-width: 0; }
+.look-editor .fbe-times { font-size: 13px; font-weight: 700; color: var(--muted); }
+.look-editor .fbe-row select.fbe-count { flex: none; width: 96px; }
+
+/* 说话表情 · AI 一键配置 */
+.le-param--auto { padding: 12px 14px; margin-bottom: 6px; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow); }
+.le-param--auto > span { font-size: 12px; color: var(--ink); }
+.look-editor .fas { margin-bottom: 10px; }
+.look-editor .fas-plan { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; line-height: 1.6; color: var(--ink); }
+.look-editor .fas-status { margin: 0; font-size: 13px; color: var(--ink); }
+.look-editor .fas-bar { position: relative; height: 4px; overflow: hidden; border-radius: 2px; background: var(--chip); }
+.look-editor .fas-bar > span { position: absolute; inset: 0 auto 0 0; width: 30%; border-radius: 2px; background: var(--accent); animation: fas-slide 1.4s ease-in-out infinite; }
+.look-editor .fas-bar--known > span { animation: none; transition: width 0.3s ease; }
+@keyframes fas-slide { from { left: -30%; } to { left: 100%; } }
+.look-editor .fas-section { display: flex; flex-direction: column; gap: 2px; }
+.look-editor .fas-section h5 { margin: 4px 0 4px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.look-editor .fas-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.look-editor .fas-row:hover { background: var(--chip); }
+.look-editor .fas-row input { flex: none; margin-top: 3px; accent-color: var(--accent); }
+.look-editor .fas-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.look-editor .fas-row__text b { font-size: 13px; color: var(--ink); }
+.look-editor .fas-row__text small { font-size: 11px; line-height: 1.5; color: var(--muted); }
+.look-editor .fas-quiet > summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+.look-editor .fas-quiet__row { padding: 3px 0 3px 14px; font-size: 11px; color: var(--muted); }
+.look-editor .fas + .le-param--auto { display: none; }
+.look-editor [data-facial-values]:empty { display: none; }
+/* 说话表情 steps as a table: one row per step, one column per model parameter. */
+.look-editor .facial-decision-head { font-size: 11px; font-weight: 700; color: var(--muted); }
+.look-editor .facial-decision-column { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+.look-editor .facial-decision-level button.facial-decision-look { align-self: center; padding: 0 6px; color: var(--gold-text); }
+.look-editor .facial-decision-level button.facial-decision-look:hover { color: var(--ink); background: var(--chip); }
+.look-editor .fbe-output .fbe-try .fbe-caption { flex-shrink: 0; }
+.look-editor .fbe-exact > summary { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--muted); }
+.look-editor .fbe-exact[open] > summary { margin-bottom: 6px; }
+.le-ai__why { min-height: 1.5em; margin: 0; font-size: 12px; }

@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality and fast tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          uv-version: "0.11.32"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install base development environment
+        run: uv sync --locked --dev
+
+      - name: Check formatting
+        run: uv run ruff format --check src tests
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Type check
+        run: uv run ty check src
+
+      - name: Run Python tests
+        run: uv run pytest -q
+
+  desktop:
+    name: Desktop typecheck, tests and build
+    runs-on: macos-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: desktop/pet
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/pet/package-lock.json
+
+      - name: Install desktop dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run desktop tests
+        run: npx vitest run
+
+      - name: Run packaging guard tests
+        run: npm run test:packaging
+
+      - name: Build Electron main process and renderer
+        run: npm run build:electron && npm run build:renderer
+
+  postgres:
+    name: PostgreSQL integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.5-pg17-trixie
+        env:
+          POSTGRES_USER: fish_memory
+          POSTGRES_PASSWORD: fish_memory
+          POSTGRES_DB: fish_memory_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fish_memory -d fish_memory_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      FISH_MEMORY_TEST_DATABASE_URL: postgresql://fish_memory:fish_memory@127.0.0.1:5432/fish_memory_test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          uv-version: "0.11.32"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install base development environment
+        run: uv sync --locked --dev
+
+      - name: Run PostgreSQL integration tests
+        run: uv run pytest -q tests/integration
+
+  agent-voice-pg0:
+    name: Agent and voice embedded PostgreSQL gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          uv-version: "0.11.32"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install base development environment
+        run: uv sync --locked --dev
+
+      - name: Run required Agent and voice PostgreSQL tests
+        run: >-
+          FISH_MEMORY_RUN_PG0_TESTS=1 uv run pytest -q
+          tests/integration/test_agent_task_flow_postgres.py
+          tests/integration/test_voice_draft_postgres.py

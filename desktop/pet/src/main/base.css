@@ -1,0 +1,13 @@
+/* Page-wide basics the look editor and older panels still build on. */
+:root { color: #eaf3ef; background: #0e1513; font-family: Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at top, #18332c, #0e1513 42%); }
+/* An app, not a web page: dragging across controls does not paint them blue.
+   What people may want to copy stays selectable. */
+body { -webkit-user-select: none; user-select: none; }
+input, textarea, [contenteditable], pre, code, .ch-bubble, .sn-logs { -webkit-user-select: text; user-select: text; }
+h1 { margin: 4px 0; font-size: 30px; }
+.checkbox { display: flex; align-items: center; gap: 9px; }
+.checkbox input { width: auto; }
+.secondary { margin-top: 14px; background: transparent; color: #a8d8c9; border: 1px solid #3b6659; border-radius: 9px; padding: 8px 12px; }
+[hidden] { display: none !important; }

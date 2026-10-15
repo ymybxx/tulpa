@@ -1,0 +1,43 @@
+"""Provider-neutral domain types for delegated Agent tasks."""
+
+from fish_memory.agent.models import (
+    AgentActivationPolicy,
+    AgentEndpoint,
+    AgentHistorySource,
+    AgentInteraction,
+    AgentInteractionKind,
+    AgentInteractionState,
+    AgentInteractionWorkItem,
+    AgentMessageEnvelope,
+    AgentMessageSubject,
+    AgentMessageSubjectKind,
+    AgentResolvedTarget,
+    AgentRun,
+    AgentRunStatus,
+    AgentRunWorkItem,
+    AgentTarget,
+    AgentTask,
+    AgentTaskCandidate,
+    ConnectorTypeSlug,
+)
+
+__all__ = [
+    "AgentActivationPolicy",
+    "AgentEndpoint",
+    "AgentHistorySource",
+    "AgentInteraction",
+    "AgentInteractionKind",
+    "AgentInteractionState",
+    "AgentInteractionWorkItem",
+    "AgentMessageEnvelope",
+    "AgentMessageSubject",
+    "AgentMessageSubjectKind",
+    "AgentResolvedTarget",
+    "AgentRun",
+    "AgentRunStatus",
+    "AgentRunWorkItem",
+    "AgentTarget",
+    "AgentTask",
+    "AgentTaskCandidate",
+    "ConnectorTypeSlug",
+]

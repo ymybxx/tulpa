@@ -1,0 +1,140 @@
+:root {
+  color: #ecfffb;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+button,
+select {
+  color: inherit;
+  font: inherit;
+}
+
+/* Placed and sized by the app; TA is clipped to it as it was to its own window. */
+#pet-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#pet-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: filter 100ms ease-out;
+}
+
+#pet-canvas.drag-hover {
+  cursor: pointer;
+  filter: drop-shadow(0 0 5px rgb(86 231 197 / 44%)) brightness(1.025);
+}
+
+#pet-canvas.dragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 0 7px rgb(86 231 197 / 58%)) brightness(1.04);
+}
+
+#unlock-interaction {
+  position: absolute;
+  z-index: 20;
+  top: 8px;
+  left: 8px;
+  /* A labelled pill: a bare padlock did not tell anyone what it was for. */
+  display: inline-flex;
+  height: 34px;
+  padding: 0 12px 0 10px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 17px;
+  font: 600 13px/1 -apple-system, "PingFang SC", sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  background: rgb(10 22 21 / 42%);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+  color: rgb(239 255 251 / 78%);
+  pointer-events: none;
+  transform: translateY(-6px) scale(0.94);
+  transition: opacity 120ms ease, transform 120ms ease;
+  backdrop-filter: blur(8px);
+}
+
+#unlock-interaction.compact {
+  width: 34px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 11px;
+}
+
+#unlock-interaction.compact span {
+  display: none;
+}
+
+#unlock-interaction.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+#unlock-interaction:hover {
+  border-color: rgb(255 255 255 / 38%);
+  background: rgb(12 34 31 / 62%);
+  color: #f5fffd;
+}
+
+#unlock-interaction svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+#empty-state[hidden],
+#error-state[hidden] {
+  display: none;
+}
+
+#empty-state,
+#error-state {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 22%;
+  display: grid;
+  width: min(320px, calc(100% - 40px));
+  gap: 7px;
+  padding: 16px;
+  transform: translateX(-50%);
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 15px;
+  background: rgb(8 18 17 / 84%);
+  text-align: center;
+  backdrop-filter: blur(16px);
+}
+
+#empty-state span {
+  color: #a7b9b5;
+  font-size: 13px;
+}

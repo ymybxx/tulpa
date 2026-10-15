@@ -1,0 +1,57 @@
+diff --git a/vendor/cubism-web-framework/src/rendering/cubismoffscreenrendertarget_webgl.ts b/vendor/cubism-web-framework/src/rendering/cubismoffscreenrendertarget_webgl.ts
+index d1efae0..107937a 100644
+--- a/vendor/cubism-web-framework/src/rendering/cubismoffscreenrendertarget_webgl.ts
++++ b/vendor/cubism-web-framework/src/rendering/cubismoffscreenrendertarget_webgl.ts
+@@ -204,6 +204,26 @@ export class CubismOffscreenRenderTarget_WebGL extends CubismRenderTarget_WebGL
+   }
+ 
+   public release(): void {
++    this.destroyRenderTarget();
++
++    if (this._webGLOffscreenManager != null) {
++      this._webGLOffscreenManager = null;
++    }
++
++    this._oldOffscreen = null;
++    this._parentOffscreenRenderTarget = null;
++  }
++
++  /**
++   * Detach this model's wrapper from the context-wide render-target pool.
++   *
++   * Unlike a regular CubismRenderTarget_WebGL, the texture and framebuffer
++   * referenced here are owned by CubismWebGLOffscreenManager and can be shared
++   * by the next model rendered on the same WebGL context. Deleting them from a
++   * retiring model leaves the pool (and a newly loaded model) holding invalid
++   * WebGL handles, which later surfaces as INVALID_OPERATION (0x502).
++   */
++  public override destroyRenderTarget(): void {
+     if (
+       this._webGLOffscreenManager != null &&
+       this._gl != null &&
+@@ -215,21 +235,10 @@ export class CubismOffscreenRenderTarget_WebGL extends CubismRenderTarget_WebGL
+       );
+     }
+ 
+-    if (this._colorBuffer && this._gl) {
+-      this._gl.deleteTexture(this._colorBuffer);
+-      this._colorBuffer = null;
+-    }
+-    if (this._renderTexture && this._gl) {
+-      this._gl.deleteFramebuffer(this._renderTexture);
+-      this._renderTexture = null;
+-    }
+-
+-    if (this._webGLOffscreenManager != null) {
+-      this._webGLOffscreenManager = null;
+-    }
+-
+-    this._oldOffscreen = null;
+-    this._parentOffscreenRenderTarget = null;
++    this._colorBuffer = null;
++    this._renderTexture = null;
++    this._bufferWidth = 0;
++    this._bufferHeight = 0;
+   }
+ 
+   private _offscreenIndex: number; // オフスクリーンのインデックス

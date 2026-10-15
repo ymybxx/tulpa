@@ -1,0 +1,165 @@
+/* 主窗口 · 角色. Layout on top of settings.css; every color is a ui/theme.css token. */
+
+/* ---------- Left: the character's stage ---------- */
+.cp-stage { position: absolute; left: 24px; top: 62px; bottom: 24px; width: 360px; }
+/* Room above the head for TA's line, so it never sits on the character. */
+.cp-stage__character { position: absolute; inset: 132px 0 64px; display: grid; }
+.cp-stage__character .onb-character { height: 100%; }
+/* The character itself opens 形象. */
+button.cp-stage__character { padding: 0; border: none; background: none; cursor: pointer; font: inherit; }
+.cp-stage__edit {
+  position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 12px; border-radius: 13px; white-space: nowrap; font-size: 12px; font-weight: 700;
+  color: var(--ink); background: var(--card); box-shadow: 0 1px 1px var(--sh-1), 0 6px 14px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+  opacity: 0; transition: opacity 0.15s ease;
+}
+button.cp-stage__character:hover .cp-stage__edit, button.cp-stage__character:focus-visible .cp-stage__edit { opacity: 1; }
+
+.cp-switch {
+  position: absolute; left: 0; top: 0; z-index: 3; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 4px;
+  border: none; border-radius: 20px; font: inherit; font-size: 14px; font-weight: 900; color: var(--ink); cursor: pointer;
+  background: var(--panel); box-shadow: 0 1px 1px var(--sh-1), 0 8px 20px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+.cp-switch svg { transform: rotate(-90deg); color: var(--muted); }
+.cp-switch__avatar {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 16px; overflow: hidden; color: var(--muted);
+  background: var(--well); box-shadow: 0 0 0 2px var(--panel), 0 0 0 3px var(--frame);
+}
+.cp-switch__avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.cp-switch__hint { font-size: 11px; font-weight: 500; color: var(--muted); }
+
+.cp-menu {
+  position: absolute; left: 0; top: 48px; z-index: 4; width: 300px; display: flex; flex-direction: column; gap: 2px; padding: 8px;
+  border-radius: 16px; background: var(--panel); box-shadow: 0 1px 1px var(--sh-1), 0 18px 40px var(--sh-3), inset 0 0 0 1px var(--panel-edge);
+}
+.cp-menu__item, .cp-menu__action {
+  display: flex; align-items: center; gap: 10px; border: none; border-radius: 12px; font: inherit; color: var(--ink);
+  background: transparent; text-align: left; cursor: pointer;
+}
+.cp-menu__item { height: 52px; padding: 0 10px 0 6px; }
+.cp-menu__item[aria-checked="true"] { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent); }
+.cp-menu__item:hover, .cp-menu__action:hover { background: var(--chip); }
+.cp-menu__initial {
+  display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; border-radius: 19px;
+  font-size: 15px; font-weight: 900; color: #FFFFFF; background: var(--hue-slate);
+}
+.cp-menu__text { display: flex; flex-direction: column; flex: 1; line-height: 1.35; }
+.cp-menu__text small { font-size: 12px; color: var(--muted); }
+.cp-menu__check { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 12px; color: #3B4354; background: var(--accent); }
+.cp-menu__divider { height: 1px; margin: 6px; background: var(--chip); }
+.cp-menu__action { height: 38px; padding: 0 10px; font-size: 13px; font-weight: 700; }
+.cp-menu__action svg { color: var(--gold-text); }
+.cp-menu__action small { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--muted); }
+
+.cp-bubble {
+  position: absolute; left: 132px; top: 62px; z-index: 2; width: 214px; padding: 10px 12px; border-radius: 14px 14px 14px 4px;
+  font-size: 12px; line-height: 1.6; color: var(--ink); background: var(--card);
+  box-shadow: 0 1px 1px var(--sh-1), 0 10px 24px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+.cp-plate {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 2px; padding: 10px 14px;
+  border-radius: 14px; line-height: 1.35; background: var(--card);
+  box-shadow: 0 1px 1px var(--sh-1), 0 8px 22px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+.cp-plate b { font-size: 13px; font-weight: 900; letter-spacing: 0.1em; color: var(--gold-text); }
+.cp-plate span { font-size: 12px; color: var(--muted); }
+
+/* ---------- Right: the page ---------- */
+.cp-panel { left: 404px; }
+.cp-tabs {
+  position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; margin: 0 28px 12px; padding: 4px;
+  border-radius: 22px; background: var(--well); box-shadow: var(--well-shadow);
+}
+.cp-tabs button {
+  height: 34px; border: none; border-radius: 17px; font: inherit; font-size: 13px; font-weight: 700; color: var(--muted);
+  background: transparent; cursor: pointer;
+}
+.cp-tabs button[aria-selected="true"] { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.cp-footer__note { flex: 1; }
+.cp-footer__dirty { font-size: 12px; font-weight: 700; color: var(--gold-text); }
+
+.cp-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cp-row__label { flex-shrink: 0; font-size: 13px; font-weight: 900; }
+.cp-row__label--gap { margin-left: 14px; }
+.cp-row .ui-input { flex: 1; min-width: 160px; height: 34px; }
+.cp-name.ui-input { flex: 0 0 140px; min-width: 0; font-weight: 700; }
+.cp-words { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.cp-word {
+  display: flex; align-items: center; gap: 4px; height: 30px; padding: 0 4px 0 12px; border-radius: 15px;
+  font-size: 13px; font-weight: 700; background: var(--well); box-shadow: var(--well-shadow);
+}
+.cp-word button { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: none; border-radius: 11px; color: var(--muted); background: transparent; cursor: pointer; }
+.cp-word button:hover { background: var(--chip); }
+.cp-add {
+  display: flex; align-items: center; gap: 4px; height: 30px; padding: 0 12px; border: none; border-radius: 15px; font: inherit; font-size: 12px; font-weight: 700;
+  color: var(--gold-text); background: transparent; box-shadow: inset 0 0 0 1.5px var(--gold-line); cursor: pointer;
+}
+
+.cp-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cp-card-head > span { font-size: 13px; font-weight: 900; letter-spacing: 0.08em; color: var(--gold-text); }
+.cp-card-head small { font-size: 11px; color: var(--muted); }
+.cp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cp-text { position: relative; }
+.cp-text textarea, .cp-text input {
+  box-sizing: border-box; width: 100%; padding: 8px 56px 8px 12px; border: none; border-radius: 8px; font: inherit; font-size: 13px; line-height: 1.6;
+  color: var(--ink); background: var(--well); box-shadow: var(--well-shadow); resize: vertical;
+}
+.cp-text input { height: 34px; padding-top: 0; padding-bottom: 0; }
+.cp-text small { position: absolute; right: 10px; bottom: 7px; font-size: 11px; color: var(--muted); }
+.cp-soul { max-height: 340px; overflow: auto; margin: 0; padding: 10px 12px; border-radius: 8px; font: inherit; font-size: 12px; white-space: pre-wrap; background: var(--well); }
+
+/* 声音 */
+.cp-strip--ok { color: var(--ok-fg); background: var(--ok-bg); }
+.cp-voices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.cp-voice { display: flex; align-items: center; height: 44px; padding-right: 6px; border-radius: 12px; background: var(--well); box-shadow: var(--well-shadow); }
+.cp-voice[aria-current="true"] { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.cp-voice__pick {
+  display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; height: 44px; padding: 0 0 0 12px; border: none;
+  font: inherit; line-height: 1.25; text-align: left; color: var(--ink); background: transparent; cursor: pointer;
+}
+.cp-voice__pick b { font-size: 13px; font-weight: 900; }
+.cp-voice__pick small { font-size: 11px; color: var(--muted); }
+.cp-voice__play { display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 15px; color: var(--btn-2-fg); background: var(--btn-2); cursor: pointer; }
+.cp-voice[aria-current="true"] .cp-voice__play { color: var(--btn-fg); background: var(--btn); }
+.cp-script { margin: 0 0 0 52px; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.7; background: var(--well); }
+
+/* 记忆 */
+.cp-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.cp-stat { flex-direction: column; align-items: flex-start; gap: 4px; }
+.cp-stat span { font-size: 12px; color: var(--muted); }
+.cp-stat b { font-size: 24px; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.cp-stat b small { margin-left: 3px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.cp-memory-columns { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 10px; align-items: start; }
+.cp-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.cp-list > li + li { box-shadow: inset 0 1px 0 var(--chip); }
+.cp-list--plain { padding-left: 18px; list-style: disc; font-size: 13px; line-height: 1.7; }
+.cp-list--plain > li + li { box-shadow: none; }
+.cp-list--nested { margin: 2px 0 6px 12px; }
+.cp-forget { display: flex; flex-direction: column; gap: 4px; padding: 5px 0; }
+.cp-forget__row { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.5; }
+.cp-forget__row > span { flex: 1; }
+.cp-forget__button { display: grid; place-items: center; flex-shrink: 0; width: 26px; height: 26px; padding: 0; border: none; border-radius: 13px; color: var(--muted); background: transparent; cursor: pointer; opacity: 0.55; }
+.cp-forget:hover .cp-forget__button, .cp-forget__button[aria-pressed="true"] { opacity: 1; }
+.cp-forget__button[aria-pressed="true"] { color: var(--warn-fg); background: var(--warn-bg); }
+.cp-forget__confirm { gap: 8px; }
+.cp-search.ui-input { width: 220px; height: 30px; border-radius: 15px; font-size: 12px; }
+.cp-entity__head {
+  display: flex; align-items: center; gap: 10px; width: 100%; height: 40px; padding: 0; border: none; font: inherit; text-align: left;
+  color: var(--ink); background: transparent; cursor: pointer;
+}
+.cp-entity__head b { font-size: 14px; }
+.cp-entity__head span { flex: 1; font-size: 12px; color: var(--muted); }
+.cp-entity__head small { font-size: 12px; color: var(--muted); }
+
+/* 用哪种语音: two radio cards, 通义 and 本机, for this character only. */
+.cp-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.cp-service {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: none; border-radius: 12px;
+  font: inherit; text-align: left; color: var(--ink); background: var(--well); box-shadow: var(--well-shadow); cursor: pointer;
+}
+.cp-service[aria-checked="true"] { background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.cp-service__dot { flex-shrink: 0; width: 14px; height: 14px; border-radius: 7px; box-shadow: inset 0 0 0 1.5px var(--muted); }
+.cp-service[aria-checked="true"] .cp-service__dot { box-shadow: inset 0 0 0 1.5px var(--gold-text), inset 0 0 0 4px var(--card), inset 0 0 0 8px var(--gold-text); }
+.cp-service__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.35; }
+.cp-service__text b { font-size: 14px; font-weight: 900; }
+.cp-service__text small { font-size: 12px; color: var(--muted); }

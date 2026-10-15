@@ -1,0 +1,25 @@
+[project]
+name = "fish-plugin-sdk"
+version = "0.1.8"
+description = "Public Python SDK for Fish Memory external event plugins"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.10,<3", "websockets>=14,<17"]
+
+[project.optional-dependencies]
+tools = ["uv>=0.11.21,<0.12", "pip>=25", "hatchling>=1.27"]
+
+[project.scripts]
+fish-plugin = "fish_plugin_sdk.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fish_plugin_sdk"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.py" }]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

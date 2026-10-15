@@ -1,0 +1,42 @@
+.worktrees/
+.idea/
+.venv/
+.env
+/.cache/
+docs/superpowers/
+.superpowers
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.ty_cache/
+*.py[cod]
+.coverage
+htmlcov/
+.DS_Store
+/sdk/python/dist/
+
+# Plugin implementations are independent projects, kept here only for local development.
+/plugins/
+
+# Local media, user-imported Live2D packages and the licensed Cubism runtime stay local.
+/local-assets/
+/desktop/pet/public/vendor/live2d/
+/desktop/pet/dist/
+/desktop/pet/dist-renderer/
+/desktop/pet/dist-electron/
+/desktop/pet/build/windows-native/
+/desktop/pet/runtime/
+/desktop/pet/release/
+/desktop/pet/release-*/
+/desktop/pet/public-runtime/cubism-shaders/
+/desktop/pet/vendor/cubism-web-framework/dist/
+/desktop/pet/node_modules/
+/desktop/pet/local-master-templates/
+/desktop/pet/.local/
+/desktop/pet/character-generation-fixtures/paid/
+
+# Local run artifacts (recordings, measurements, builds)
+output/
+
+# Local Claude Code settings (preview launch configs)
+/.claude/

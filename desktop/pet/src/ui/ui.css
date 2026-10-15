@@ -1,0 +1,262 @@
+:where(.ui-theme) button { font: inherit; color: inherit; }
+:where(.ui-theme) :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ui-icon { flex-shrink: 0; }
+
+.ui-hue-slate { --hue: var(--hue-slate); }
+.ui-hue-blue { --hue: var(--hue-blue); }
+.ui-hue-amber { --hue: var(--hue-amber); }
+.ui-hue-rose { --hue: var(--hue-rose); }
+.ui-hue-green { --hue: var(--hue-green); }
+.ui-hue-violet { --hue: var(--hue-violet); }
+
+/* ---------- Pill buttons: the signature A+ control ---------- */
+.ui-pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 42px; padding: 0 20px 0 5px;
+  border: none; border-radius: 21px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+.ui-pill--sm { height: 30px; padding: 0 12px 0 3px; gap: 6px; border-radius: 15px; font-size: 12px; }
+.ui-pill__icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; }
+.ui-pill--sm .ui-pill__icon { width: 24px; height: 24px; }
+/* Without an icon the label sits in the middle. */
+.ui-pill--plain { justify-content: center; padding: 0 22px; }
+.ui-pill--sm.ui-pill--plain { padding: 0 14px; }
+.ui-pill--primary {
+  color: var(--btn-fg); background: var(--btn);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 2px 0 var(--btn-edge), 0 8px 18px var(--sh-2);
+}
+.ui-pill--primary .ui-pill__icon { color: var(--accent-ink); background: var(--accent); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.ui-pill--secondary {
+  color: var(--btn-2-fg); background: var(--btn-2);
+  box-shadow: 0 2px 0 var(--btn-2-edge), 0 4px 10px var(--sh-2);
+}
+.ui-pill--secondary .ui-pill__icon { color: var(--btn-icon-2-fg); background: var(--btn-icon-2); }
+.ui-pill:not(:disabled):hover { transform: translateY(-1px); }
+.ui-pill:not(:disabled):active { transform: translateY(1px); box-shadow: 0 1px 0 var(--btn-edge), 0 3px 8px var(--sh-2); }
+.ui-pill:disabled { cursor: not-allowed; opacity: 0.45; }
+
+/* Back a level: shaped like a secondary pill so it is seen at once. */
+.ui-back {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px 0 4px; border: none; border-radius: 16px;
+  cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; white-space: nowrap;
+  color: var(--btn-2-fg); background: var(--btn-2); box-shadow: 0 2px 0 var(--btn-2-edge), 0 4px 10px var(--sh-2);
+  transition: transform 0.12s ease;
+}
+.ui-back:hover { transform: translateX(-2px); }
+.ui-back__icon { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 12px; color: var(--btn-icon-2-fg); background: var(--btn-icon-2); }
+
+/* A quiet secondary action: a soft chip, never an underlined link. */
+.ui-text-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 26px; padding: 0 10px; border: none; border-radius: 13px; cursor: pointer; text-decoration: none;
+  font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap;
+  color: var(--gold-text); background: color-mix(in srgb, var(--gold-text) 10%, transparent);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.ui-text-button:not(:disabled):hover { background: color-mix(in srgb, var(--gold-text) 18%, transparent); }
+.ui-text-button:not(:disabled):active { background: color-mix(in srgb, var(--gold-text) 24%, transparent); }
+.ui-text-button:disabled { cursor: not-allowed; opacity: 0.45; }
+
+/* ---------- Panels and cards ---------- */
+.ui-panel {
+  position: relative; display: flex; flex-direction: column; min-height: 0;
+  border-radius: var(--radius-panel); background: var(--panel);
+  box-shadow: 0 1px 1px var(--sh-1), 0 14px 30px var(--sh-2), 0 36px 70px var(--sh-3), inset 0 0 0 1px var(--panel-edge);
+}
+.ui-panel::before {
+  content: ""; position: absolute; inset: 6px; border-radius: calc(var(--radius-panel) - 4px);
+  box-shadow: inset 0 0 0 1px var(--frame); pointer-events: none;
+}
+.ui-panel__body { position: relative; flex: 1; min-height: 0; overflow: auto; padding: 22px 28px 16px; }
+.ui-panel__footer {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+  background: var(--panel-2); box-shadow: inset 0 1px 0 var(--panel-edge);
+}
+
+.ui-card { padding: 12px 14px; border-radius: var(--radius-card); background: var(--card); box-shadow: var(--card-shadow); }
+.ui-card + .ui-card { margin-top: 10px; }
+.ui-card__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.ui-card__header h2 { margin: 0; font-size: 14px; font-weight: 900; }
+.ui-card__aside { font-size: 11px; color: var(--muted); }
+
+.ui-ornament {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.24em; color: var(--gold-text);
+}
+.ui-ornament svg path { fill: none; stroke: var(--gold-line); stroke-width: 1.2; stroke-linecap: round; }
+
+/* ---------- Badges, tags, chips ---------- */
+.ui-badge { flex-shrink: 0; padding: 4px 8px; border-radius: 9px; font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; }
+.ui-badge--ok { color: var(--ok-fg); background: var(--ok-bg); }
+.ui-badge--warn { color: var(--warn-fg); background: var(--warn-bg); }
+.ui-badge--info { color: var(--info-fg); background: var(--info-bg); }
+.ui-badge--muted { color: var(--muted); background: var(--chip); }
+.ui-tag { padding: 4px 8px; border-radius: 9px; font-size: 11px; line-height: 1; color: var(--muted); background: var(--chip); }
+
+.ui-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 34px; padding: 0 16px; border: none; border-radius: 17px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  color: var(--ink); background: var(--well); box-shadow: var(--well-shadow);
+}
+/* Selecting keeps the chip's width, so the row never rewraps under the pointer. */
+.ui-chip[aria-pressed="true"] {
+  position: relative; padding: 0 8px 0 24px;
+  color: var(--btn-fg); background: var(--btn); box-shadow: 0 2px 6px var(--sh-2);
+}
+/* Same mark as the pill buttons: a gold dot with a dark tick, clear on light and dark chips. */
+.ui-chip__check {
+  position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
+  display: inline-grid; place-items: center; width: 14px; height: 14px;
+  border-radius: 50%; color: var(--accent-ink); background: var(--accent);
+}
+.ui-chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.ui-chip--add { color: var(--muted); background: transparent; box-shadow: inset 0 0 0 1.5px var(--frame); padding: 0 14px 0 12px; }
+.ui-chip-input {
+  display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 3px 0 4px;
+  border-radius: 17px; background: var(--card); box-shadow: inset 0 0 0 1.5px var(--btn);
+}
+.ui-chip-input input { width: 104px; height: 30px; padding: 0 10px; border: none; outline: none; background: transparent; font: inherit; font-size: 13px; color: var(--ink); }
+.ui-chip-input button { display: grid; place-items: center; width: 28px; height: 28px; border: none; border-radius: 50%; color: var(--accent-ink); background: var(--accent); cursor: pointer; }
+.ui-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- Segmented control ---------- */
+.ui-segmented { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; border-radius: 18px; background: var(--well); box-shadow: var(--well-shadow); }
+.ui-segmented button { height: 32px; padding: 0 14px; border: none; border-radius: 14px; background: transparent; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.ui-segmented button[aria-checked="true"] { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+
+.ui-language { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; }
+.ui-language__label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ui-language__label > .ui-icon { color: var(--gold-text); margin-right: 2px; }
+.ui-language__choices { width: max-content; max-width: 100%; }
+.ui-language__choices button { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 36px; padding: 0 12px; white-space: nowrap; transition: background .15s ease, box-shadow .15s ease; }
+.ui-language__choices button:hover:not(:disabled):not([aria-checked="true"]) { background: var(--chip); color: var(--ink); }
+.ui-language__choices button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.ui-language__choices button:disabled { cursor: wait; opacity: .65; }
+.ui-language__check { display: flex; visibility: hidden; color: var(--gold-text); }
+.ui-language__choices button[aria-checked="true"] .ui-language__check { visibility: visible; }
+
+/* ---------- Option cards (single choice) ---------- */
+.ui-option {
+  position: relative; display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 11px 14px 11px 10px; border: none; border-radius: 12px 12px 24px 12px;
+  text-align: left; cursor: pointer;
+  background: var(--well); box-shadow: var(--well-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ui-option[aria-checked="true"] {
+  background: var(--card); transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--accent), 0 0 18px var(--accent-glow), 0 8px 18px var(--sh-2);
+}
+.ui-option__icon {
+  display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+  color: #FFFFFF; background: var(--hue-slate);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 3px 6px var(--sh-2);
+}
+.ui-option[aria-checked="true"] .ui-option__icon { background: var(--hue); }
+.ui-option__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.ui-option__title { font-size: 15px; font-weight: 900; }
+.ui-option__description { font-size: 12px; color: var(--muted); }
+.ui-option__tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.ui-option__flag {
+  position: absolute; top: -7px; right: 10px; padding: 4px 8px; border-radius: 9px;
+  font-size: 10px; font-weight: 700; line-height: 1; color: var(--accent-ink); background: var(--accent);
+  box-shadow: 0 2px 6px var(--sh-2);
+}
+
+/* ---------- Switch ---------- */
+.ui-switch { position: relative; flex-shrink: 0; width: 46px; height: 26px; padding: 0; border: none; border-radius: 13px; cursor: pointer; background: var(--well); box-shadow: var(--well-shadow); transition: background 0.15s ease; }
+.ui-switch[aria-checked="true"] { background: var(--switch-on); box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2); }
+.ui-switch__knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); transition: left 0.15s ease; }
+.ui-switch[aria-checked="true"] .ui-switch__knob { left: 23px; }
+.ui-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Rows ---------- */
+.ui-row { display: flex; align-items: center; gap: 12px; padding: 7px 8px; margin: 0 -8px; border-radius: var(--radius-row); }
+.ui-row--highlighted { background: var(--well); box-shadow: 0 0 0 1.5px var(--accent); }
+.ui-row__icon { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; color: #FFFFFF; background: var(--hue); }
+.ui-row__text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.35; }
+.ui-row__title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+.ui-row__subtitle { font-size: 12px; color: var(--muted); }
+/* A fixed action column keeps every row's button aligned whatever its label says. */
+.ui-row__action { display: flex; justify-content: flex-end; flex-shrink: 0; width: 128px; }
+.ui-row__action .ui-pill { width: 100%; justify-content: flex-start; }
+
+/* ---------- Character tip ---------- */
+.ui-tip {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  margin: 8px 0 6px 38px; padding: 8px 12px 8px 8px; border-radius: 12px;
+  font-size: 12px; line-height: 1.55; background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--frame), 0 2px 8px var(--sh-1);
+}
+.ui-tip::before {
+  content: ""; position: absolute; left: 22px; top: -6px; width: 10px; height: 10px;
+  transform: rotate(45deg); background: var(--panel); box-shadow: -1px -1px 0 var(--frame);
+}
+.ui-tip b { color: var(--gold-text); }
+.ui-tip__avatar { position: relative; flex-shrink: 0; width: 30px; height: 30px; overflow: hidden; border-radius: 50%; background: var(--sky-2); box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--frame); }
+
+/* ---------- Dialog ---------- */
+.ui-dialog-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; background: rgba(15, 20, 32, 0.55); }
+.ui-dialog {
+  position: relative; width: min(420px, 100%); overflow: hidden; border-radius: var(--radius-panel);
+  background: var(--panel); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 0 0 1px var(--panel-edge);
+}
+.ui-dialog::before { content: ""; position: absolute; inset: 6px; border-radius: calc(var(--radius-panel) - 4px); box-shadow: inset 0 0 0 1px var(--frame); pointer-events: none; }
+.ui-dialog__body { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px 24px 16px; font-size: 13px; line-height: 1.7; }
+.ui-dialog__body h2 { margin: 0 0 2px; text-align: center; font-size: 18px; font-weight: 900; }
+.ui-dialog__body strong { color: var(--ink); }
+.ui-dialog__footer { position: relative; display: flex; justify-content: flex-end; gap: 10px; padding: 12px 16px; background: var(--panel-2); box-shadow: inset 0 1px 0 var(--panel-edge); }
+
+/* ---------- Form fields ---------- */
+.ui-field { display: flex; flex-direction: column; gap: 6px; }
+.ui-field__label { font-size: 13px; font-weight: 700; }
+.ui-field__hint { font-size: 12px; color: var(--muted); }
+.ui-input {
+  height: 42px; padding: 0 14px; border: none; border-radius: 10px; outline: none;
+  font: inherit; font-size: 15px; color: var(--ink); background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--panel-edge), inset 0 1px 3px var(--sh-1);
+  box-sizing: border-box;
+}
+.ui-input:focus { box-shadow: inset 0 0 0 2px var(--accent); }
+.ui-input--ok { box-shadow: inset 0 0 0 2px var(--switch-on); }
+textarea.ui-input { height: auto; padding: 10px 14px; resize: none; line-height: 1.6; font-size: 13px; }
+
+/* ---------- Step dots (on the sky) ---------- */
+.ui-step-dots { display: inline-flex; align-items: center; gap: 6px; }
+.ui-step-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); box-shadow: inset 0 0 0 1.5px var(--scene-ink); }
+.ui-step-dots .done { background: var(--scene-ink); }
+.ui-step-dots .current { width: 12px; height: 12px; background: var(--scene-ink); box-shadow: 0 0 10px var(--scene-ink); }
+
+/* ---------- Notices: what just happened, in a soft tinted box ---------- */
+.ui-notice {
+  display: flex; align-items: flex-start; gap: 8px; padding: 9px 12px; border-radius: 12px;
+  font-size: 12.5px; line-height: 1.55; text-align: left;
+}
+.ui-notice__icon { flex-shrink: 0; display: grid; place-items: center; width: 18px; height: 18px; margin-top: 1px; border-radius: 9px; }
+.ui-notice__text { flex: 1; min-width: 0; }
+.ui-notice__action { flex-shrink: 0; align-self: center; }
+.ui-notice--error {
+  color: var(--danger-fg); background: color-mix(in srgb, var(--danger-fg) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger-fg) 16%, transparent);
+}
+.ui-notice--error .ui-notice__icon { color: var(--panel); background: var(--danger-fg); }
+.ui-notice--warn { color: var(--warn-fg); background: var(--warn-bg); }
+.ui-notice--warn .ui-notice__icon { color: var(--warn-bg); background: var(--warn-fg); }
+.ui-notice--ok { color: var(--ok-fg); background: var(--ok-bg); }
+.ui-notice--ok .ui-notice__icon { color: var(--ok-bg); background: var(--ok-fg); }
+.ui-notice--info { color: var(--ink); background: var(--well); box-shadow: var(--well-shadow); }
+.ui-notice--info .ui-notice__icon { color: var(--gold-text); background: var(--chip); }
+
+/* Keep longer translated labels readable at the same window sizes. */
+:lang(en) .ui-pill { height: auto; min-height: 42px; padding-block: 5px; }
+:lang(en) .ui-pill--sm { min-height: 30px; padding-block: 3px; }
+:lang(en) .ui-pill__icon { flex-shrink: 0; }
+:lang(en) .ui-segmented button { height: auto; min-height: 32px; padding-block: 5px; }
+:lang(en) .ui-row__title { flex-wrap: wrap; }
+:lang(en) .ui-row__action { width: auto; max-width: 45%; }
+:lang(en) .ui-dialog { max-height: calc(100vh - 48px); overflow: auto; }
+:lang(en) .ui-dialog__footer { flex-wrap: wrap; }

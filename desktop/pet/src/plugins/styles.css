@@ -1,0 +1,46 @@
+.plugin-shell { height:100%; overflow:auto; padding:28px; color:#e3e9e7; background:#10201c; }
+.plugin-shell header { display:flex; gap:24px; justify-content:space-between; align-items:center; }
+.plugin-shell h1 { margin:8px 0; font-size:28px; }
+.plugin-shell header span { font-size:11px; letter-spacing:2px; color:#81baa2; }
+.plugin-shell p,.plugin-shell small { color:#9cb0a7; line-height:1.6; }
+.plugin-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.plugin-shell button { border:1px solid #3d6757; border-radius:8px; padding:10px 14px; background:#244b3d; color:#edf8f2; cursor:pointer; }
+.plugin-shell button:hover { background:#30664f; }
+.plugin-layout { display:grid; grid-template-columns:220px 1fr; gap:24px; }
+.plugin-list { display:grid; gap:10px; }
+.plugin-list button { text-align:left; background:#192e25; }
+.plugin-list button.selected { border-color:#8dd3b2; }
+.plugin-detail { min-width:0; background:#152a22; border:1px solid #2a473a; padding:22px; border-radius:12px; }
+.plugin-config { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+.plugin-config label { display:grid; gap:7px; font-size:13px; }
+.plugin-shell input:not([type=checkbox]),.plugin-shell select,.plugin-shell textarea { width:100%; box-sizing:border-box; background:#0c1b15; border:1px solid #3a594a; color:#e8f5ec; border-radius:6px; padding:10px; }
+.plugin-shell details { margin-top:22px; border-top:1px solid #2a473a; padding-top:16px; }
+.plugin-shell summary { cursor:pointer; margin-bottom:14px; }
+.plugin-shell pre { max-height:330px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; background:#0c1b15; padding:12px; font:12px/1.6 ui-monospace,monospace; }
+.plugin-shell textarea { margin:10px 0; font-family:ui-monospace,monospace; }
+.plugin-notice { min-height:24px; }
+.plugin-notice.error { color:#ffb19f; }
+.plugin-shell button:disabled { opacity:.5; cursor:default; }
+.plugin-reviews { margin-top:24px; padding-top:18px; border-top:1px solid #3a594a; }
+.plugin-review-heading { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.plugin-review-heading h3 { margin:0; }
+.plugin-review-history { display:grid; gap:12px; }
+.plugin-shell .plugin-review-card { margin-top:0; padding:14px 16px; border:1px solid #355747; border-radius:8px; background:#11221b; }
+.plugin-review-card > small,.plugin-review-goal-content small { display:block; overflow-wrap:anywhere; }
+.plugin-review-finding { margin:16px 0; padding:2px 14px; border-left:3px solid #d2b57b; }
+.plugin-review-finding h4 { margin:10px 0; }
+.plugin-review-finding blockquote { margin:10px 0; padding:10px 12px; background:#0b1812; color:#bbd1c5; white-space:pre-wrap; overflow-wrap:anywhere; }
+.plugin-shell .plugin-review-evidence { margin-top:10px; padding-top:8px; border-top:0; }
+.plugin-review-evidence summary { color:#9cdabd; font-size:13px; }
+.plugin-review-metrics { font-size:13px; }
+.plugin-review-goal-content a { color:#9cdabd; }
+.plugin-reviews [data-action=more-reviews] { margin-top:12px; }
+.plugin-manual-form { margin-top:24px; padding:20px; border:1px solid #497c65; border-radius:12px; background:#10251c; }
+.plugin-manual-form h3 { margin:0; }
+.plugin-manual-form label { display:grid; gap:6px; margin:14px 0; }
+.plugin-manual-form textarea { font-family:inherit; margin:0; resize:vertical; }
+.plugin-manual-status { min-height:24px; margin-bottom:0; }
+.plugin-manual-history { display:grid; gap:10px; max-height:360px; overflow:auto; margin-top:14px; }
+.plugin-manual-history article { padding:12px 14px; border-radius:8px; background:#0b1b14; }
+.plugin-manual-history p { margin:6px 0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.plugin-manual-history .plugin-manual-reply { color:#d7eddf; border-left:2px solid #72af8b; padding-left:10px; }

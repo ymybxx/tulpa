@@ -1,0 +1,37 @@
+.ui-sky {
+  position: absolute; inset: 0; overflow: hidden;
+  background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 36%, var(--sky-3) 62%, var(--sky-4) 100%);
+}
+.ui-sky__sun { position: absolute; inset: 0; background: radial-gradient(circle at var(--sun-at), var(--sun) 0, var(--sun-fade) 6%, transparent 26%); }
+.ui-sky__layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ui-sky__stars { fill: #FFF6E0; opacity: var(--star-opacity); }
+.ui-sky__islands { fill: var(--island); }
+.ui-sky__haze { position: absolute; left: 0; right: 0; top: 44%; height: 22%; background: linear-gradient(180deg, transparent, var(--haze) 55%, transparent); }
+.ui-sky__clouds-far { fill: var(--cloud-far); }
+.ui-sky__clouds-mid { fill: var(--cloud-mid); }
+
+.ui-halo { position: absolute; left: 50%; top: 50%; width: min(78%, 360px); transform: translate(-50%, -54%); pointer-events: none; }
+.ui-halo circle { fill: none; stroke: var(--ring); }
+.ui-halo__outer { stroke-width: 1; opacity: 0.55; }
+.ui-halo__inner { fill: var(--ring-fill) !important; stroke-width: 1.4; opacity: 0.7; }
+.ui-halo__dots { stroke-width: 1; stroke-dasharray: 1 7; stroke-linecap: round; opacity: 0.9; }
+
+.ui-platform { position: absolute; left: 50%; bottom: 0; width: min(100%, 400px); transform: translateX(-50%); fill: var(--cloud-near); pointer-events: none; }
+.ui-platform__shadow { fill: var(--cloud-near-shade); }
+
+.ui-scene-title { display: flex; align-items: center; gap: 12px; color: var(--scene-ink); text-shadow: var(--scene-ink-shadow); }
+.ui-scene-title__badge { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--scene-badge); box-shadow: inset 0 0 0 1.5px var(--scene-ink); }
+.ui-scene-title__text { display: flex; flex-direction: column; line-height: 1.2; }
+.ui-scene-title__text strong { font-size: 20px; font-weight: 900; letter-spacing: 0.06em; }
+.ui-scene-title__text small { font-family: var(--font-label); font-size: 10px; letter-spacing: 0.3em; }
+.ui-scene-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--scene-ink); text-shadow: var(--scene-ink-shadow); }
+
+.ui-caption {
+  position: relative; display: flex; align-items: flex-start; gap: 12px;
+  padding: 11px 16px 12px; border-radius: 14px; background: var(--card);
+  box-shadow: 0 1px 1px var(--sh-1), 0 8px 22px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+.ui-caption::before { content: ""; position: absolute; inset: 4px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--frame); pointer-events: none; }
+.ui-caption__name { flex-shrink: 0; padding-top: 1px; font-size: 13px; font-weight: 900; letter-spacing: 0.1em; color: var(--gold-text); }
+.ui-caption__rule { width: 1px; align-self: stretch; background: var(--frame); }
+.ui-caption__line { font-size: 13px; line-height: 1.65; }

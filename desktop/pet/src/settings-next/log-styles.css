@@ -1,0 +1,73 @@
+/* 运行日志 inside the settings panel, in the parchment theme. */
+.sn-logs { color: var(--ink); font-size: 13px; }
+.sn-logs button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--btn-2-edge);
+  border-radius: 999px;
+  background: var(--btn-2);
+  color: var(--btn-2-fg);
+  padding: 5px 12px;
+}
+.sn-logs button.active { border-color: var(--gold-line); background: var(--accent); color: var(--accent-ink); }
+/* The settings header already says what this is; keep only the refresh button. */
+.llm-log-heading { display: flex; justify-content: flex-end; }
+.llm-log-heading > div { display: none; }
+.llm-log-filters { display: flex; align-items: end; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+.llm-log-filters label { display: grid; gap: 6px; min-width: 140px; color: var(--muted); font-size: 12px; }
+.llm-log-filters select {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--well); box-shadow: var(--well-shadow);
+  border: 0; border-radius: 8px; padding: 6px 10px;
+}
+.llm-log-filters .log-auto-label { display: flex; align-items: center; gap: 6px; min-width: auto; padding-bottom: 7px; }
+.log-auto { width: auto; margin: 0; }
+.log-notice { min-height: 18px; color: var(--warn-fg); font-size: 12px; }
+.llm-log-layout { display: grid; grid-template-columns: minmax(220px, 290px) minmax(0, 1fr); gap: 14px; align-items: start; }
+.log-list-panel { position: sticky; top: 0; max-height: calc(100vh - 260px); overflow: auto; }
+.log-list { display: grid; gap: 6px; }
+.sn-logs .log-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px;
+  width: 100%; padding: 9px 12px; text-align: left; border-radius: var(--radius-row);
+  background: var(--card); box-shadow: var(--card-shadow);
+}
+.sn-logs .log-row.selected { border-color: var(--gold-line); background: var(--panel-2); }
+.log-row small { grid-column: 1 / -1; overflow-wrap: anywhere; color: var(--muted); font-size: 11px; }
+.log-state { font-size: 11px; align-self: center; padding: 1px 6px; border-radius: 5px; color: var(--ok-fg); background: var(--ok-bg); }
+.log-state.failed { color: var(--danger-fg); background: var(--warn-bg); }
+.log-state.cancelled { color: var(--muted); background: var(--chip); }
+.log-state.running { color: var(--warn-fg); background: var(--warn-bg); }
+.log-more { width: 100%; margin-top: 10px; }
+.log-detail-panel {
+  min-width: 0; min-height: 420px; padding: 18px;
+  border-radius: var(--radius-card); background: var(--card); box-shadow: var(--card-shadow);
+}
+.log-detail-placeholder { padding: 70px 12px; text-align: center; color: var(--muted); }
+.log-detail-heading h3 { margin: 0; font-size: 15px; }
+.log-detail-heading p { margin: 6px 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.log-error { color: var(--danger-fg) !important; white-space: pre-wrap; }
+.log-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0; position: sticky; top: 0; background: var(--card); z-index: 1; }
+.log-copy { margin-left: auto; }
+.log-detail-content { min-width: 0; }
+.log-detail-content h3 { font-size: 14px; }
+.log-message { border: 1px solid var(--panel-edge); border-radius: 10px; margin: 12px 0; overflow: hidden; }
+.log-message h4 { margin: 0; padding: 8px 12px; background: var(--panel-2); color: var(--gold-text); font-size: 12px; font-weight: 600; }
+.log-message > .log-text, .log-message > .log-json-decoded, .log-message > .log-json-object { padding: 12px; }
+.log-text, .log-raw {
+  margin: 0; font: 12px/1.75 "SFMono-Regular", Consolas, "PingFang SC", monospace;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; color: var(--ink);
+}
+.log-raw { max-height: 60vh; overflow: auto; padding-top: 12px; }
+.log-json-key { display: block; margin-bottom: 4px; font: 12px/1.7 "SFMono-Regular", monospace; color: var(--hue-blue); }
+.log-json-field { padding: 8px 0; border-bottom: 1px solid var(--panel-edge); }
+.log-json-field:last-child { border: 0; }
+.log-json-object .log-json-object { padding-left: 14px; border-left: 1px solid var(--panel-edge); }
+.log-json-hint { font-size: 11px; color: var(--muted); }
+.log-literal { color: var(--hue-amber); font-family: monospace; }
+.sn-logs details { border: 1px solid var(--panel-edge); border-radius: 6px; padding: 8px 10px; margin: 8px 0; }
+.sn-logs summary { color: var(--gold-text); font: 12px/1.7 "SFMono-Regular", "PingFang SC", monospace; cursor: pointer; }
+.log-image img { display: block; max-width: 100%; max-height: 400px; margin-top: 10px; }
+@media (max-width: 850px) {
+  .llm-log-layout { grid-template-columns: 1fr; }
+  .log-list-panel { position: static; max-height: 280px; }
+  .log-copy { margin-left: 0; }
+}

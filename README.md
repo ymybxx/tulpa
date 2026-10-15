@@ -116,6 +116,31 @@ tulpa 内置一套专为陪伴型 AI 设计的**多层记忆系统**，在长期
 Windows 版还没有做代码签名，按「快速开始」里的步骤放行即可。macOS 安装包已通过 Apple 公证，可以直接打开。
 </details>
 
+## 从源码运行
+
+tulpa 由两部分组成：`desktop/pet` 是 Electron 桌面应用（Live2D、聊天、设置、原生音频与屏幕感知助手），`src/fish_memory` 是它在本机启动的 Python 服务（记忆、语音、陪伴决策）。
+
+```bash
+git clone https://github.com/ymybxx/tulpa.git
+cd tulpa
+uv sync --extra voice --dev
+cd desktop/pet
+npm ci
+npm run dev        # Windows: npm run dev:win
+```
+
+需要 Python 3.11 + [uv](https://docs.astral.sh/uv/)、Node.js 18+；macOS 还需要 Xcode Command Line Tools。测试、打包和代码结构见 [CONTRIBUTING.md](CONTRIBUTING.md) 与 [desktop/pet/README.md](desktop/pet/README.md)。
+
+## 许可证
+
+tulpa 的源码以 [MIT](LICENSE) 协议开源。以下部分不在 MIT 范围内，各自遵循原协议：
+
+- `desktop/pet/vendor/cubism-web-framework`：Live2D Open Software License。
+- Live2D Cubism Core 与官方示例模型 Mao：不在仓库里，打包时下载并随安装包分发，遵循 Live2D 的相应协议。
+- 安装包内附带的语音模型，以及首次使用时下载的模型。
+
+详见 [THIRD_PARTY_NOTICES.md](desktop/pet/THIRD_PARTY_NOTICES.md)。
+
 ## 反馈
 
 遇到问题或有想法，欢迎到 [Issues](https://github.com/ymybxx/tulpa/issues) 告诉我们。

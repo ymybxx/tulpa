@@ -1,0 +1,224 @@
+/* 聊两句 beside the pet: the speech card, the entry button and the composer.
+   Light single-edged cards, no inner frame, so they stay quiet beside the pet.
+   Every color is a ui/theme.css token, so day, dusk and night follow the scene like the senses capsule does. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+button, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+[hidden] { display: none !important; }
+
+#senses-root { font-family: var(--font-sans); color: var(--ink); }
+#senses-root button:focus-visible, #senses-root textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pc-card svg, .pc-entry svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.pc-card {
+  position: absolute;
+  border-radius: 18px;
+  background: var(--panel);
+  box-shadow: 0 1px 1px var(--sh-1), 0 10px 24px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+}
+
+/* ---------- 聊两句 and 主窗口: labelled pills beside the pet ---------- */
+.pc-entry {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--panel);
+  box-shadow: 0 1px 1px var(--sh-1), 0 8px 18px var(--sh-2), inset 0 0 0 1px var(--panel-edge);
+  pointer-events: auto;
+}
+.pc-entry svg { flex-shrink: 0; width: 16px; height: 16px; color: var(--gold-text); }
+.pc-entry:hover { background: var(--card); }
+.pc-entry:active { transform: scale(0.97); }
+
+/* ---------- What TA is saying ---------- */
+.pc-bubble { padding: 12px 16px 13px; pointer-events: none; }
+.pc-bubble__heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 16px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold-text);
+}
+.pc-wave { display: flex; align-items: flex-end; gap: 2px; height: 10px; }
+.pc-wave i { width: 3px; height: 10px; border-radius: 2px; background: var(--gold-text); animation: pc-bar 0.9s ease-in-out infinite; }
+.pc-wave i:nth-child(2) { animation-delay: -0.3s; }
+.pc-wave i:nth-child(3) { animation-delay: -0.6s; }
+@keyframes pc-bar { 50% { transform: scaleY(0.4); } }
+.pc-bubble[data-voice="stopped"] .pc-bubble__heading { color: var(--muted); }
+.pc-bubble[data-voice="stopped"] .pc-wave { display: none; }
+.pc-bubble[data-voice="quiet"] .pc-bubble__heading { display: none; }
+#speech-scroll { position: relative; height: calc(100% - 22px); overflow: hidden; }
+.pc-bubble[data-voice="quiet"] #speech-scroll { height: 100%; }
+#speech-scroll.overflowing { mask-image: linear-gradient(transparent, #000 12px); }
+#speech { font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-wrap; user-select: text; color: var(--ink); }
+/* Why the reply did not reach the user; alone when TA said nothing. */
+#speech-note {
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 9px;
+  width: fit-content;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+}
+#speech:empty + #speech-note { margin-top: 0; }
+
+/* ---------- The composer ---------- */
+.pc-composer { display: flex; flex-direction: column; padding: 9px 11px 10px; pointer-events: auto; }
+.pc-composer__heading { position: relative; display: flex; align-items: center; justify-content: space-between; height: 22px; padding: 0 2px 0 5px; }
+#history {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--gold-text);
+}
+#history svg { width: 12px; height: 12px; opacity: 0.7; }
+#history:hover svg { opacity: 1; }
+.pc-composer__actions { display: flex; align-items: center; gap: 2px; }
+#new-chat { display: flex; align-items: center; gap: 3px; height: 22px; padding: 0 7px 0 5px; border-radius: 11px; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+#new-chat svg { width: 12px; height: 12px; stroke-width: 2.4; }
+#new-chat:hover { color: var(--ink); background: var(--chip); }
+#new-chat:disabled { opacity: 0.5; cursor: default; }
+#close { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 11px; color: var(--muted); }
+#close svg { width: 11px; height: 11px; stroke-width: 3; }
+#close:hover { color: var(--ink); background: var(--chip); }
+
+#input {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin: 4px 0 0;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 12px;
+  resize: none;
+  outline: none !important;
+  font-size: 14px;
+  line-height: 1.5;
+  user-select: text;
+  color: var(--ink);
+  caret-color: var(--gold-text);
+  background: var(--well);
+  box-shadow: var(--well-shadow);
+}
+#input::placeholder { color: var(--muted); opacity: 0.8; }
+
+.pc-composer__footer { position: relative; display: flex; align-items: center; gap: 8px; height: 32px; margin-top: 6px; padding-left: 5px; }
+#hint { flex: 1; min-width: 0; font-size: 11px; line-height: 1.25; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* An error can't hide behind a hover tooltip here, so it gets two lines. */
+#hint.error { color: var(--danger-fg); white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.pc-send {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 13px 0 3px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--btn-fg);
+  background: var(--btn);
+  box-shadow: 0 2px 0 var(--btn-edge), 0 4px 10px var(--sh-2);
+}
+.pc-send span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 12px; color: #3B4354; background: var(--accent); }
+.pc-send svg { width: 12px; height: 12px; stroke-width: 2.8; }
+.pc-send:disabled { cursor: default; opacity: 0.5; box-shadow: none; }
+.pc-send:enabled:active { transform: translateY(1px); }
+
+/* ---------- Right-click quick panel ---------- */
+/* Above every other card in this layer, e.g. an open composer. */
+.pc-quick { z-index: 5; display: flex; flex-direction: column; gap: 8px; padding: 10px; overflow-y: auto; pointer-events: auto; }
+.pc-quick svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pq-head { display: flex; align-items: center; gap: 10px; padding: 2px 2px 2px 4px; }
+.pq-avatar { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 17px; color: var(--gold-text); background: var(--well); box-shadow: var(--well-shadow); }
+.pq-avatar svg { width: 18px; height: 18px; }
+.pq-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pq-who b { font-size: 14px; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pq-who small { font-size: 11px; color: var(--muted); }
+.pq-main-button { display: flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; font-size: 12px; font-weight: 700; color: var(--muted); background: var(--chip); }
+.pq-main-button svg { width: 14px; height: 14px; }
+.pq-main-button:hover { color: var(--ink); }
+.pq-head--edit { justify-content: space-between; padding: 2px 2px 2px 6px; }
+.pq-title { font-size: 12px; font-weight: 900; letter-spacing: 0.1em; color: var(--gold-text); }
+.pq-done { height: 26px; padding: 0 14px; border-radius: 13px; font-size: 12px; font-weight: 700; color: var(--btn-fg); background: var(--btn); box-shadow: 0 2px 0 var(--btn-edge); }
+
+.pq-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.pq-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 58px; padding: 0 4px;
+  border-radius: 12px; font-size: 11px; font-weight: 700; color: var(--muted); background: var(--well); box-shadow: var(--well-shadow);
+}
+.pq-tile span:not([class]) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pq-tile svg { width: 18px; height: 18px; opacity: 0.75; }
+.pq-tile:hover { color: var(--ink); }
+.pq-tile--on { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1.5px var(--accent), 0 2px 6px var(--sh-2); }
+.pq-tile--on svg { color: var(--gold-text); opacity: 1; }
+.pq-tile--available { background: transparent; box-shadow: inset 0 0 0 1px var(--panel-edge); }
+.pq-tile[draggable="true"] { cursor: grab; }
+.pq-warn { position: absolute; right: 7px; top: 7px; width: 8px; height: 8px; border-radius: 4px; background: #D9822B; box-shadow: 0 0 0 2px var(--card); }
+.pq-badge { position: absolute; right: -4px; top: -4px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 9px; font-size: 13px; line-height: 1; color: #fff; }
+.pq-badge--remove { background: var(--muted); }
+.pq-badge--add { color: #3B4354; background: var(--accent); }
+.pq-hint { margin: 4px 4px -2px; font-size: 11px; color: var(--muted); }
+.pq-empty { grid-column: 1 / -1; margin: 0; padding: 14px 0; text-align: center; font-size: 12px; color: var(--muted); }
+
+.pq-rows { display: flex; flex-direction: column; gap: 1px; padding-top: 6px; box-shadow: inset 0 1px 0 var(--chip); }
+.pq-row { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 8px; border-radius: 10px; font-size: 13px; text-align: left; }
+.pq-row svg { flex-shrink: 0; width: 16px; height: 16px; color: var(--gold-text); }
+.pq-row svg:last-child:not(:first-child) { width: 14px; height: 14px; color: var(--muted); }
+.pq-row[aria-expanded="true"] svg:last-child { transform: rotate(90deg); }
+.pq-row__label { flex: 1; }
+.pq-row small { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--muted); }
+.pq-row:hover:enabled { background: var(--chip); }
+.pq-row:disabled { cursor: default; opacity: 0.5; }
+.pq-looks { display: flex; flex-direction: column; margin: 0 0 4px 34px; }
+.pq-look { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 8px; border-radius: 8px; font-size: 12px; text-align: left; color: var(--muted); }
+.pq-look:hover { color: var(--ink); background: var(--chip); }
+.pq-look__dot { width: 8px; height: 8px; border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--muted); }
+.pq-look[aria-checked="true"] { font-weight: 700; color: var(--ink); }
+.pq-look[aria-checked="true"] .pq-look__dot { background: var(--accent); box-shadow: none; }
+
+.pq-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px 0; box-shadow: inset 0 1px 0 var(--chip); }
+.pq-link { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; border-radius: 13px; font-size: 12px; color: var(--muted); }
+.pq-link svg { width: 14px; height: 14px; }
+.pq-link:hover { color: var(--ink); background: var(--chip); }
+
+/* ---------- Pictures and files ---------- */
+.pc-attach, .pc-attach-clear {
+  flex-shrink: 0; display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: none; border-radius: 13px;
+  color: inherit; background: transparent; cursor: pointer; opacity: 0.75;
+}
+.pc-attach:hover, .pc-attach-clear:hover { opacity: 1; }
+.pc-attach svg, .pc-attach-clear svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pc-attach-clear svg { width: 12px; height: 12px; }
+.pc-composer.dropping textarea { box-shadow: 0 0 0 2px var(--gold-line, #d9b36a); }
