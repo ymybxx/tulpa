@@ -24,7 +24,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
-          uv-version: "0.11.32"
+          version: "0.11.32"
           enable-cache: true
           cache-dependency-glob: uv.lock
 
@@ -37,11 +37,17 @@ jobs:
       - name: Lint
         run: uv run ruff check .
 
-      - name: Type check
-        run: uv run ty check src
-
       - name: Run Python tests
         run: uv run pytest -q
+
+      # The voice modules import their optional packages lazily; install them so
+      # the type checker can resolve those imports. aec-audio-processing ships
+      # only Windows wheels and is loaded by name, so it is skipped here.
+      - name: Install voice extra for type checking
+        run: uv sync --locked --dev --extra voice --no-install-package aec-audio-processing
+
+      - name: Type check
+        run: uv run --no-sync ty check src
 
   desktop:
     name: Desktop typecheck, tests and build
@@ -103,7 +109,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
-          uv-version: "0.11.32"
+          version: "0.11.32"
           enable-cache: true
           cache-dependency-glob: uv.lock
 
@@ -124,7 +130,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
-          uv-version: "0.11.32"
+          version: "0.11.32"
           enable-cache: true
           cache-dependency-glob: uv.lock
 
