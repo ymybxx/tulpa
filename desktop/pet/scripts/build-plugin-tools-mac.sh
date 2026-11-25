@@ -26,10 +26,15 @@ uv build --package fish-plugin-sdk --wheel --out-dir "$tools_root"
 rm -f "$tools_root"/plugins/fish.live-*.fish-plugin
 if [[ -f "$live_plugin_root/fish-plugin.json" ]]; then
   sdk_wheels=("$tools_root"/fish_plugin_sdk-*.whl)
+  # Notarized releases need the native extensions inside bundled wheels signed.
+  sign_args=()
+  if [[ "${FISH_MEMORY_RELEASE_SIGN:-}" == "1" ]]; then
+    sign_args=(--codesign-identity "$FISH_MEMORY_CODESIGN_IDENTITY")
+  fi
   PYTHONPATH="$live_plugin_root/src" \
   uv run --no-project --isolated --python "$plugin_python" \
     --with "$project_root/sdk/python[tools]" --with 'httpx>=0.28,<1' --with 'Brotli>=1.1,<2' \
-    python -m fish_plugin_sdk.cli build "$live_plugin_root" --sdk-wheel "${sdk_wheels[0]}"
+    python -m fish_plugin_sdk.cli build "$live_plugin_root" --sdk-wheel "${sdk_wheels[0]}" ${sign_args[@]+"${sign_args[@]}"}
   plugin_version="$("$plugin_python" -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$live_plugin_root/fish-plugin.json")"
   cp "$live_plugin_root/dist/fish.live-$plugin_version-darwin-arm64-py311.fish-plugin" "$tools_root/plugins/"
 fi

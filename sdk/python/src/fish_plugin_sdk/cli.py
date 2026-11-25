@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import csv
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -149,7 +152,56 @@ def check(root: Path) -> dict:
     }
 
 
-def build(root: Path, sdk_wheel: Path | None = None) -> Path:
+def sign_wheel_binaries(wheel: Path, identity: str) -> None:
+    """Code-sign the native extensions inside a wheel and keep its RECORD valid.
+
+    Apple notarization inspects binaries nested in archives, so a plugin shipped
+    inside a notarized app needs its wheels' extensions signed too.
+    """
+    with zipfile.ZipFile(wheel) as source:
+        infos = source.infolist()
+        native = [i.filename for i in infos if i.filename.endswith((".so", ".dylib"))]
+        if not native:
+            return
+        data = {i.filename: source.read(i) for i in infos}
+    with tempfile.TemporaryDirectory(prefix="fish-sign-") as temp:
+        for name in native:
+            binary = Path(temp) / name
+            binary.parent.mkdir(parents=True, exist_ok=True)
+            binary.write_bytes(data[name])
+            subprocess.run(
+                [
+                    "codesign",
+                    "--force",
+                    "--sign",
+                    identity,
+                    "--timestamp",
+                    "--options",
+                    "runtime",
+                    str(binary),
+                ],
+                check=True,
+            )
+            data[name] = binary.read_bytes()
+    record = next(n for n in data if n.endswith(".dist-info/RECORD"))
+    rows = list(csv.reader(io.StringIO(data[record].decode())))
+    for row in rows:
+        if row and row[0] in native:
+            digest = base64.urlsafe_b64encode(
+                hashlib.sha256(data[row[0]]).digest()
+            ).rstrip(b"=")
+            row[1:3] = ["sha256=" + digest.decode(), str(len(data[row[0]]))]
+    text = io.StringIO()
+    csv.writer(text, lineterminator="\n").writerows(rows)
+    data[record] = text.getvalue().encode()
+    with zipfile.ZipFile(wheel, "w", zipfile.ZIP_DEFLATED) as output:
+        for info in infos:
+            output.writestr(info, data[info.filename], zipfile.ZIP_DEFLATED)
+
+
+def build(
+    root: Path, sdk_wheel: Path | None = None, codesign_identity: str | None = None
+) -> Path:
     uv = shutil.which("uv")
     if uv is None:
         raise ValueError("Install fish-plugin-sdk[tools] to use build")
@@ -181,6 +233,9 @@ def build(root: Path, sdk_wheel: Path | None = None) -> Path:
             ],
             check=True,
         )
+        if codesign_identity:
+            for wheel in wheels.glob("*.whl"):
+                sign_wheel_binaries(wheel, codesign_identity)
         (work / "check-report.json").write_text(
             json.dumps(report, ensure_ascii=False, indent=2)
         )
@@ -244,6 +299,11 @@ def main() -> None:
         default=None,
         help="Unpublished SDK wheel for first-party development",
     )
+    parser.add_argument(
+        "--codesign-identity",
+        default=None,
+        help="macOS signing identity for native extensions in bundled wheels",
+    )
     args = parser.parse_args()
     root = Path(args.path).resolve()
     try:
@@ -252,7 +312,7 @@ def main() -> None:
         elif args.command == "check":
             print(json.dumps(check(root), ensure_ascii=False, indent=2))
         elif args.command == "build":
-            print(build(root, args.sdk_wheel))
+            print(build(root, args.sdk_wheel, args.codesign_identity))
         else:
             dev(root, args.app_file or app_file())
     except (ValueError, OSError, subprocess.SubprocessError) as error:

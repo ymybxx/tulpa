@@ -43,11 +43,28 @@ if [[ -z "$signing_identity" ]]; then
   fi
 fi
 
+# Release builds (FISH_MEMORY_RELEASE_SIGN=1, Developer ID identity) need the
+# hardened runtime, a secure timestamp and explicit entitlements for notarization.
+release_sign="${FISH_MEMORY_RELEASE_SIGN:-}"
+entitlements="$pet_root/packaging/entitlements.mac.plist"
+
 sign_code_preserving_metadata() {
   local identity="$1"
   local target="$2"
   local metadata="entitlements,flags,runtime"
   local output
+
+  if [[ "$release_sign" == "1" ]]; then
+    if output="$(
+      codesign --force --sign "$identity" --options runtime --timestamp \
+        --entitlements "$entitlements" "$target" 2>&1
+    )"; then
+      return 0
+    fi
+    echo "代码签名失败：${target}" >&2
+    printf '%s\n' "$output" >&2
+    return 1
+  fi
 
   # Preserve security-relevant metadata from the existing signature, but do not
   # preserve its requirements: an ad-hoc requirement is tied to one cdhash.
@@ -109,6 +126,10 @@ sign_application_inside_out() {
   echo "已由内向外签名 ${signed_macho_files} 个 Mach-O 文件和 ${signed_bundles} 个嵌套代码包。"
 }
 
+if [[ "$release_sign" == "1" && ( -z "$signing_identity" || "$signing_identity" == "-" ) ]]; then
+  echo "正式签名需要用 FISH_MEMORY_CODESIGN_IDENTITY 指定 Developer ID Application 证书。" >&2
+  exit 1
+fi
 if [[ -n "$signing_identity" && "$signing_identity" != "-" ]]; then
   sign_application_inside_out "$signing_identity"
   signing_kind="稳定本地证书 $signing_identity"

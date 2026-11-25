@@ -40,6 +40,7 @@
     "prepare:live2d": "vite-node scripts/prepare-bundled-live2d.ts runtime/mac-arm64/models/live2d",
     "prepare:epsilon-master": "node scripts/prepare-epsilon-master.mjs",
     "dist:mac": "npm run dist:mac:local && bash scripts/make-dmg-mac.sh",
+    "dist:mac:release": "bash scripts/release-mac.sh",
     "predist:mac:local": "node scripts/assert-packaging-idle.mjs",
     "dist:mac:local": "npm run build:runtime:mac && npm run build:plugins:mac && npm run prepare:models && npm run prepare:live2d && npm run build && node scripts/assert-packaging-idle.mjs && rimraf release dist && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dir --arm64 --config.electronDist=node_modules/electron/dist && bash scripts/adhoc-sign-mac.sh",
     "build:native:win": "pwsh -NoProfile -File scripts/build-native-windows.ps1",
