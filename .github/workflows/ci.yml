@@ -28,26 +28,23 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      - name: Install base development environment
-        run: uv sync --locked --dev
+      # The voice extra is needed by the voice tests and by the type checker.
+      # aec-audio-processing ships only Windows wheels and is loaded by name,
+      # so it is skipped on Linux.
+      - name: Install development environment with the voice extra
+        run: uv sync --locked --dev --extra voice --no-install-package aec-audio-processing
 
       - name: Check formatting
-        run: uv run ruff format --check src tests
+        run: uv run --no-sync ruff format --check src tests
 
       - name: Lint
-        run: uv run ruff check .
-
-      - name: Run Python tests
-        run: uv run pytest -q
-
-      # The voice modules import their optional packages lazily; install them so
-      # the type checker can resolve those imports. aec-audio-processing ships
-      # only Windows wheels and is loaded by name, so it is skipped here.
-      - name: Install voice extra for type checking
-        run: uv sync --locked --dev --extra voice --no-install-package aec-audio-processing
+        run: uv run --no-sync ruff check .
 
       - name: Type check
         run: uv run --no-sync ty check src
+
+      - name: Run Python tests
+        run: uv run --no-sync pytest -q
 
   desktop:
     name: Desktop typecheck, tests and build
