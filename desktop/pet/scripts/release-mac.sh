@@ -19,8 +19,13 @@ if [[ -z "$identity" ]]; then
   fi
   identity="$(awk '{print $2}' <<<"$identities")"
 fi
-if ! xcrun notarytool history --keychain-profile "$notary_profile" >/dev/null 2>&1; then
-  echo "找不到公证凭据“${notary_profile}”，请先运行：xcrun notarytool store-credentials ${notary_profile}" >&2
+if ! notary_check="$(xcrun notarytool history --keychain-profile "$notary_profile" 2>&1)"; then
+  printf '%s\n' "$notary_check" >&2
+  if grep -q "agreement" <<<"$notary_check"; then
+    echo "Apple 开发者协议需要重新同意：登录 developer.apple.com/account 接受新协议后再试。" >&2
+  else
+    echo "公证凭据“${notary_profile}”不可用。如果还没存，先运行：xcrun notarytool store-credentials ${notary_profile}" >&2
+  fi
   exit 1
 fi
 
