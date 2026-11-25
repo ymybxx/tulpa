@@ -1,6 +1,6 @@
 [project]
 name = "tulpa"
-version = "0.1.0"
+version = "0.1.1"
 description = "Local service behind tulpa, a desktop companion with voice, Live2D characters and long-term memory"
 readme = "README.md"
 license = "MIT"
