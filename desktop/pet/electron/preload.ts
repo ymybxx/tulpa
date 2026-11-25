@@ -189,6 +189,7 @@ const api: DesktopPetApi = {
     return () => ipcRenderer.removeListener("desktop:model-readiness", listener);
   },
   retryModelPreparation: () => ipcRenderer.invoke("desktop:model-readiness:retry"),
+  exportDiagnostics: () => ipcRenderer.invoke("desktop:diagnostics:export"),
   getMainWindowState: () => ipcRenderer.invoke("desktop:main:state"),
   onMainWindowState: (callback) => on("desktop:main:state", callback),
   getMainWindowVisible: () => ipcRenderer.invoke("desktop:main:visible"),

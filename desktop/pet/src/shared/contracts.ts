@@ -624,6 +624,8 @@ export interface DesktopPetApi {
   getModelImageInput(): Promise<ModelImageInputStatus | null>;
   onModelReadiness(callback: (value: ModelReadiness) => void): () => void;
   retryModelPreparation(): Promise<void>;
+  /** Saves a plain-text report (versions, service state, end of runtime.log) to the desktop and shows it. */
+  exportDiagnostics(): Promise<string>;
   getMainWindowState(): Promise<DesktopMainWindowState>;
   onMainWindowState(callback: (state: DesktopMainWindowState) => void): () => void;
   getMainWindowVisible(): Promise<boolean>;

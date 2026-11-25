@@ -743,6 +743,16 @@ function ReadinessStrip({ readiness }: { readiness: ModelReadiness | null }) {
     catch (error) { setRetryError(readableError(error)); }
     finally { setRetrying(false); }
   };
+  const [exporting, setExporting] = useState(false);
+  const [exported, setExported] = useState<"saved" | "failed" | null>(null);
+  const exportDiagnostics = async () => {
+    if (exporting) return;
+    setExporting(true);
+    setExported(null);
+    try { await window.desktopPet.exportDiagnostics(); setExported("saved"); }
+    catch { setExported("failed"); }
+    finally { setExporting(false); }
+  };
   if (!readiness || readiness.state === "ready") return null;
   const failed = readiness.state === "failed";
   return (
@@ -750,7 +760,15 @@ function ReadinessStrip({ readiness }: { readiness: ModelReadiness | null }) {
       <Icon name={failed ? "warn" : "sound"} size={14} />
       <span><strong>{readiness.text}</strong> · {readiness.detail}
         {retryError && <span role="alert"> · {t("重试未完成，请再试一次")} {retryError}</span>}
+        {exported === "saved" && <span> · {t("诊断信息已保存到桌面，发给开发者就好")}</span>}
+        {exported === "failed" && <span role="alert"> · {t("导出没完成，请再试一次")}</span>}
       </span>
+      {failed && (
+        <PillButton size="sm" variant="secondary" disabled={exporting}
+          onClick={() => void exportDiagnostics()}>
+          {exporting ? t("正在导出…") : t("导出诊断信息")}
+        </PillButton>
+      )}
       {failed && (
         <PillButton size="sm" icon="check" disabled={retrying}
           onClick={() => void retry()}>

@@ -7,6 +7,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { configureProcessJobs, type NativeProcessJobs } from "./platform/process-tree";
 import { platformPerceptionExecutable } from "./platform/runtime-paths";
+import { exportDiagnostics } from "./diagnostics-export";
 
 import {
   app,
@@ -1426,6 +1427,25 @@ function registerIpc(): void {
   ipcMain.handle("desktop:model-readiness:retry", async (event) => {
     assertOwnerVoiceSender(event, mainWindow?.webContents);
     await retryModelPreparation();
+  });
+  ipcMain.handle("desktop:diagnostics:export", async (event) => {
+    assertOwnerVoiceSender(event, mainWindow?.webContents);
+    const target = await exportDiagnostics(
+      app.getPath("desktop"),
+      path.join(app.getPath("userData"), "logs", "runtime.log"),
+      {
+        appName: app.getName(),
+        appVersion: app.getVersion(),
+        platform: process.platform,
+        arch: process.arch,
+        systemVersion: process.getSystemVersion(),
+        createdAt: new Date(),
+        runtime: runtime.currentStatus(),
+        readiness: modelReadiness,
+      },
+    );
+    shell.showItemInFolder(target);
+    return target;
   });
   ipcMain.handle("desktop:character:current", async (event) => {
     assertOwnerVoiceSender(event, mainWindow?.webContents);
